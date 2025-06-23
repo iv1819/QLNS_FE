@@ -1,12 +1,14 @@
 package API;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -35,6 +37,8 @@ public abstract class ApiClientBase { // Đã chuyển thành abstract vì nó k
 
         // Khởi tạo ObjectMapper của Jackson
         this.objectMapper = new ObjectMapper();
+        // Đăng ký module để hỗ trợ Java 8 Date/Time API (LocalDate, etc.)
+        this.objectMapper.registerModule(new JavaTimeModule());
         // Có thể thêm các cấu hình Jackson khác nếu cần, ví dụ:
         // objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }

@@ -94,7 +94,7 @@ public void populateMaterialCategoryTabs(LinkedHashMap<String, ArrayList<Book>> 
     // 3. Render trang đầu tiên của danh mục đầu tiên
     renderCurrentPage();
 
-    // 4. Lắng nghe chọn tab để reset currentPage = 0
+    // 4. Lắng nghe chọn tab để reset currentPage = 0
     jmTabBooks.addChangeListener(e -> {
         currentCategoryIndex = jmTabBooks.getSelectedIndex();
         currentPage = 0;
@@ -624,10 +624,17 @@ private void renderCurrentPage() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnQliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnQliActionPerformed
-        // TODO add your handling code here:
-         BookM bookManagementFrame = new BookM(presenter);
-                bookManagementFrame.setVisible(true);
+        // Mở MainMenuManager thay vì BookM trực tiếp
+        MainMenuManager mainMenuManager = new MainMenuManager();
+        mainMenuManager.setVisible(true);
+        this.setVisible(false); // Ẩn MainMenu chính
     }//GEN-LAST:event_jbtnQliActionPerformed
+
+    private void jbtnQuanLyNhanVienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnQuanLyNhanVienActionPerformed
+        // TODO add your handling code here:
+        EmployeeM employeeManagementFrame = new EmployeeM(presenter);
+        employeeManagementFrame.setVisible(true);
+    }//GEN-LAST:event_jbtnQuanLyNhanVienActionPerformed
 
     private void jbtnThemHDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnThemHDActionPerformed
         // TODO add your handling code here:

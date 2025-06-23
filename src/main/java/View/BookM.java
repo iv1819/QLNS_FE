@@ -5,6 +5,7 @@
 package View;
 import Presenter.BookMPresenter; // Import Controller
 import Presenter.MainMenuPresenter;
+import Presenter.MainMenuManagerPresenter;
 import Model.Book;
 import java.awt.Image;
 import java.io.File;
@@ -43,6 +44,7 @@ import java.util.Objects;
 public class BookM extends javax.swing.JFrame implements IBookM{
    private BookMPresenter presenter; // Thay thế controller bằng presenter
     private MainMenuPresenter mainMenuPresenter;
+    private MainMenuManagerPresenter mainMenuManagerPresenter;
     private static final String API_BASE_URL = "http://localhost:8080/api"; 
     private static String API_BASE_URL_FOR_IMAGES; 
     // Lưu đường dẫn ảnh hiện tại
@@ -50,10 +52,11 @@ public class BookM extends javax.swing.JFrame implements IBookM{
      * Creates new form BookM
      */
  public BookM() {
-        this(null);
+        this((MainMenuPresenter)null);
     }
  public BookM(MainMenuPresenter mainMenuPresenter) {
         this.mainMenuPresenter = mainMenuPresenter; // Lưu tham chiếu
+        this.mainMenuManagerPresenter = null;
         initComponents();
         
         presenter = new BookMPresenter(this); 
@@ -98,6 +101,50 @@ public class BookM extends javax.swing.JFrame implements IBookM{
                 if (mainMenuPresenter != null) {
                      presenter.removeListener(mainMenuPresenter); // Hủy đăng ký listener
                      System.out.println("DEBUG (BookM): Đã hủy đăng ký MainMenuPresenter khỏi BookMPresenter.");
+                }
+            }
+        });
+    }
+    
+    public BookM(MainMenuManagerPresenter mainMenuManagerPresenter) {
+        this.mainMenuManagerPresenter = mainMenuManagerPresenter;
+        this.mainMenuPresenter = null;
+        initComponents();
+        
+        presenter = new BookMPresenter(this);
+        
+        jTable_Books.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting() && jTable_Books.getSelectedRow() != -1) {
+                    // Lấy dữ liệu từ bảng và yêu cầu Presenter điền vào form
+                    int selectedRow = jTable_Books.getSelectedRow();
+                    DefaultTableModel model = (DefaultTableModel) jTable_Books.getModel();
+                    
+                    String maSach = model.getValueAt(selectedRow, 0).toString();
+                    String tenSach = model.getValueAt(selectedRow, 1).toString();
+                    int soLuong = Integer.parseInt(model.getValueAt(selectedRow, 2).toString());
+                    double giaBan = Double.parseDouble(model.getValueAt(selectedRow, 3).toString());
+                    
+                    String tacGia     = Objects.toString(model.getValueAt(selectedRow, 4), "");
+                    String nhaXB      = Objects.toString(model.getValueAt(selectedRow, 5), "");
+                    String maDanhMuc  = Objects.toString(model.getValueAt(selectedRow, 6), "");
+                    int namXB = Integer.parseInt(model.getValueAt(selectedRow, 7).toString());
+                    String duongDanAnh = model.getValueAt(selectedRow, 8).toString();
+                    
+                    Book selectedBook = new Book(maSach, tenSach, soLuong, giaBan, tacGia, nhaXB, duongDanAnh, namXB, maDanhMuc);
+                    populateBookDetails(selectedBook);
+                }
+            }
+        });
+
+        presenter.loadAllBooks();
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                if (mainMenuManagerPresenter != null) {
+                    mainMenuManagerPresenter.showMainMenuManager();
                 }
             }
         });
@@ -281,6 +328,7 @@ public void updateImagePreview(String imagePath) {
         jbtnThem = new javax.swing.JButton();
         jbtnSua = new javax.swing.JButton();
         jbtnXoa = new javax.swing.JButton();
+        btnBack = new javax.swing.JButton();
         JMiddle = new javax.swing.JPanel();
         JMaSach = new javax.swing.JLabel();
         JTenSach = new javax.swing.JLabel();
@@ -349,11 +397,25 @@ public void updateImagePreview(String imagePath) {
             }
         });
 
+        btnBack.setText("Quay lại");
+        btnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                // Logic trực tiếp để tránh xung đột
+                if (mainMenuManagerPresenter != null) {
+                    mainMenuManagerPresenter.showMainMenuManager();
+                }
+                dispose();
+            }
+        });
+
         javax.swing.GroupLayout JUpperLayout = new javax.swing.GroupLayout(JUpper);
         JUpper.setLayout(JUpperLayout);
         JUpperLayout.setHorizontalGroup(
             JUpperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, JUpperLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnBack)
+                .addGap(279, 279, 279))
             .addGroup(JUpperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(JUpperLayout.createSequentialGroup()
                     .addGap(9, 9, 9)
@@ -368,7 +430,10 @@ public void updateImagePreview(String imagePath) {
         );
         JUpperLayout.setVerticalGroup(
             JUpperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 64, Short.MAX_VALUE)
+            .addGroup(JUpperLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(btnBack)
+                .addContainerGap(21, Short.MAX_VALUE))
             .addGroup(JUpperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(JUpperLayout.createSequentialGroup()
                     .addGap(20, 20, 20)
@@ -679,9 +744,6 @@ public void updateImagePreview(String imagePath) {
                     }
     }//GEN-LAST:event_jbtnAnhActionPerformed
 
-  
-
-
     @Override
     public void showMessage(String message) {
         JOptionPane.showMessageDialog(this, message);
@@ -735,6 +797,7 @@ public void updateImagePreview(String imagePath) {
     private javax.swing.JLabel JTacGia;
     private javax.swing.JLabel JTenSach;
     private javax.swing.JPanel JUpper;
+    private javax.swing.JButton btnBack;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
