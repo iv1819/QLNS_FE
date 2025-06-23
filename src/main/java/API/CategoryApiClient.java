@@ -9,7 +9,9 @@ import Model.Category;
 import com.fasterxml.jackson.core.type.TypeReference;
     import okhttp3.*;
     import java.io.IOException;
-    import java.util.Arrays;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collections;
     import java.util.List;
 import java.util.logging.Level;
@@ -78,5 +80,14 @@ import java.util.logging.Logger;
         public void deleteCategory(String maDanhMuc) throws IOException {
            sendDeleteRequest(CATEGORIES + "/" + maDanhMuc);
         }
+        /**
+ * Gọi API để lấy mã danh mục theo tên danh mục
+ */
+        public String getIdByTenDanhMuc(String tenDanhMuc) throws IOException {
+            String encodedName = URLEncoder.encode(tenDanhMuc, StandardCharsets.UTF_8);
+            return sendGetRequest(CATEGORIES + "/findid?tenDanhMuc=" + encodedName); // Không parse JSON
+        }
+
+
     }
     
