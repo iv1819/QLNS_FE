@@ -19,7 +19,7 @@ public class MainMenu_Manager2 extends javax.swing.JFrame {
     public MainMenu_Manager2(MainMenu parent, MainMenuPresenter presenter, boolean IsManager) {
     this.presenter = presenter;  // <-- KHÔNG còn null
     initComponents();
-
+setLocationRelativeTo(null);
     if(IsManager){
         btnBookM.addActionListener(evt -> {
             BookM bookM = new BookM(this.presenter);
@@ -38,7 +38,9 @@ public class MainMenu_Manager2 extends javax.swing.JFrame {
 
              jbtnOrderM.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                  
+                  OrderM orderM = new OrderM();
+                    orderM.setVisible(true);
+                    dispose();
                 }
             });
 

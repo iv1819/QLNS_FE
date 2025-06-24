@@ -7,14 +7,18 @@ package View.interfaces;
 import Model.Book;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import javax.swing.table.DefaultTableModel;
 
 
 public interface IMainMenu {
      void populateMaterialCategoryTabs(LinkedHashMap<String, ArrayList<Book>> categorizedBooks);
     void updateSelectedBook(Book book);
     void addReceiptItem(Object[] rowData);
-    void updateReceiptTotalAmount(double totalAmount);
-    void updateReceiptTotalItems(int totalItems);
     void showMessage(String message);
     void showErrorMessage(String message);
+    void updateReceiptTotal(boolean hasDiscount);
+    void clearReceiptTable();
+    void populateComboBox();
+    double LayTongTien();
+    DefaultTableModel getReceiptTableModel();
 }

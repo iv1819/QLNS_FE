@@ -9,7 +9,6 @@ import API.BookApiClient;
 import API.CategoryApiClient; // Cần thiết để lấy tên danh mục
 import API.PublisherApiClient;
 import Model.Book;
-import Model.Category;
 import View.BookM;
 import View.interfaces.IBookM;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -18,18 +17,11 @@ import okhttp3.OkHttpClient;
 import javax.swing.SwingWorker;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -449,12 +441,5 @@ BookM.setApiBaseUrlForImages("http://localhost:8080");
         loadAllPublishersAndPopulateNames(); // Tải tên nhà xuất bản
         loadAllCategoriesAndPopulateNames(); // Tải tên danh mục
     }
-    /**
-     * Lấy mã danh mục từ tên danh mục (qua API nếu có endpoint, hoặc xử lý cục bộ).
-     * @param tenDanhMuc Tên danh mục.
-     * @return Mã danh mục.
-     */
-
-    
 }
 
