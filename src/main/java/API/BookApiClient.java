@@ -5,8 +5,6 @@
 package API;
 
 import Entity.Book;
-import Model.BookDto;
-import okhttp3.*;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -40,13 +38,13 @@ private static final String BOOKS_API_PATH = "/books";
     }
 
    
-    public Book addBook(BookDto bookDto) throws IOException { // <-- THAY ĐỔI THAM SỐ
+    public Book addBook(Book bookDto) throws IOException { // <-- THAY ĐỔI THAM SỐ
         String jsonInputString = objectMapper.writeValueAsString(bookDto); // <-- CHUYỂN BOOKDTO THÀNH JSON
         String jsonResponse = sendPostRequest(BOOKS_API_PATH, jsonInputString);
         return objectMapper.readValue(jsonResponse, Book.class);
     }
 
-     public Book updateBook(String id, BookDto bookDto) throws IOException { // <-- THAY ĐỔI THAM SỐ
+     public Book updateBook(String id, Book bookDto) throws IOException { // <-- THAY ĐỔI THAM SỐ
         if (id == null || id.trim().isEmpty()) { // Kiểm tra ID từ tham số
             throw new IllegalArgumentException("ID sách không được để trống khi cập nhật.");
         }

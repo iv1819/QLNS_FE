@@ -9,7 +9,6 @@ import API.BookApiClient;
 import API.CategoryApiClient; // Cần thiết để lấy tên danh mục
 import API.PublisherApiClient;
 import Entity.Book;
-import Model.BookDto;
 import View.BookM;
 import View.interfaces.IBookM;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -233,7 +232,7 @@ BookM.setApiBaseUrlForImages("http://localhost:8080");
     public void addBook() {
         // Đảm bảo book.getDuongDanAnh() chứa uploadedImageUrl
          // Lấy dữ liệu từ View và tạo BookDto
-        BookDto bookDto = new BookDto();
+        Book bookDto = new Book();
         bookDto.setTenSach(view.getTenSach());
         bookDto.setSoLuong(view.getSoLuong());
         bookDto.setGiaBan(view.getGiaBan());
@@ -281,7 +280,7 @@ BookM.setApiBaseUrlForImages("http://localhost:8080");
             return;
         }
          // Lấy dữ liệu từ View và tạo BookDto
-        BookDto bookDto = new BookDto();
+        Book bookDto = new Book();
         bookDto.setMaSach(maSach); // Đảm bảo ID được truyền vào DTO
         bookDto.setTenSach(view.getTenSach());
         bookDto.setSoLuong(view.getSoLuong());

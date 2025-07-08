@@ -67,7 +67,6 @@ API\PublisherApiClient$2.class
 View\MainMenu_Manager2$10.class
 View\MainMenu_Manager2.class
 View\EmployeeM$6.class
-Model\BookDto.class
 com\mycompany\qlins\QliNS.class
 View\MainMenu$7.class
 Presenter\OrderMPresenter$1.class
