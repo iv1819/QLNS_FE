@@ -4,7 +4,7 @@
  */
 package View.interfaces;
 
-import Entity.Book;
+import Model.Book;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;

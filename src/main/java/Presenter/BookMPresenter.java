@@ -8,7 +8,7 @@ import API.AuthorApiClient;
 import API.BookApiClient;
 import API.CategoryApiClient; // Cần thiết để lấy tên danh mục
 import API.PublisherApiClient;
-import Entity.Book;
+import Model.Book;
 import View.BookM;
 import View.interfaces.IBookM;
 import com.fasterxml.jackson.databind.JsonNode;

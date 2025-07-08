@@ -6,7 +6,7 @@ package View;
 import Presenter.BookMPresenter; // Import Controller
 import Presenter.MainMenuPresenter;
 import Presenter.MainMenuManagerPresenter;
-import Entity.Book;
+import Model.Book;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;

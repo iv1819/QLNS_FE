@@ -1,5 +1,5 @@
 
-package Entity;
+package Model;
 
 import java.io.Serializable;
 // Không còn import java.awt.Image, BufferedImage, File, URL, ImageIO

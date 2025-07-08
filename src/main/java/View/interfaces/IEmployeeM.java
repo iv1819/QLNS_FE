@@ -1,6 +1,6 @@
 package View.interfaces;
 
-import Entity.Employee;
+import Model.Employee;
 import java.util.ArrayList;
 import java.util.Date;
 

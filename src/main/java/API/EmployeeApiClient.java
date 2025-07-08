@@ -1,6 +1,6 @@
 package API;
 
-import Entity.Employee;
+import Model.Employee;
 import okhttp3.*;
 import java.io.IOException;
 import java.math.BigDecimal;

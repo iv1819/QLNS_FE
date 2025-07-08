@@ -6,7 +6,7 @@ package View;
 
 import Presenter.MainMenuPresenter;
 import View.interfaces.IMainMenu;
-import Entity.Book;
+import Model.Book;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

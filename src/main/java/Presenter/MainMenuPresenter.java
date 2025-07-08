@@ -8,10 +8,10 @@ import API.BookApiClient;
 import API.CategoryApiClient;
 import API.ODApiClient;
 import API.OrderApiClient;
-import Entity.Book;
-import Entity.Category;
-import Entity.OD;
-import Entity.Order;
+import Model.Book;
+import Model.Category;
+import Model.OD;
+import Model.Order;
 import View.interfaces.IMainMenu;
 import util.BookDataChangeListener; // Vẫn sử dụng listener này
 import java.io.IOException;

@@ -1,7 +1,7 @@
 package Presenter;
 
 import API.EmployeeApiClient;
-import Entity.Employee;
+import Model.Employee;
 import View.interfaces.IEmployeeM;
 import util.BookDataChangeListener;
 import javax.swing.SwingWorker;

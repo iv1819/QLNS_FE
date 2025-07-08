@@ -7,7 +7,7 @@ package View;
 import Presenter.EmployeeMPresenter;
 import Presenter.MainMenuPresenter;
 import Presenter.MainMenuManagerPresenter;
-import Entity.Employee;
+import Model.Employee;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;

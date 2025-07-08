@@ -4,7 +4,7 @@
  */
 package API;
 
-import Entity.Author;
+import Model.Author;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
