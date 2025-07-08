@@ -6,29 +6,22 @@ package View;
 import Presenter.BookMPresenter; // Import Controller
 import Presenter.MainMenuPresenter;
 import Presenter.MainMenuManagerPresenter;
-import Model.Book;
+import Entity.Book;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.border.Border;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.JFrame;
 import View.interfaces.IBookM;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -46,6 +39,7 @@ public class BookM extends javax.swing.JFrame implements IBookM{
     private MainMenuPresenter mainMenuPresenter;
     private MainMenuManagerPresenter mainMenuManagerPresenter;
     private static final String API_BASE_URL = "http://localhost:8080/api"; 
+    private String currentImagePath;
     private static String API_BASE_URL_FOR_IMAGES; 
     // Lưu đường dẫn ảnh hiện tại
     /**
@@ -55,7 +49,7 @@ public class BookM extends javax.swing.JFrame implements IBookM{
         this((MainMenuPresenter)null);
     }
  public BookM(MainMenuPresenter mainMenuPresenter) {
-        this.mainMenuPresenter = mainMenuPresenter; // Lưu tham chiếu
+        this.mainMenuPresenter = mainMenuPresenter; 
         this.mainMenuManagerPresenter = null;
         initComponents();
         
@@ -71,28 +65,10 @@ public class BookM extends javax.swing.JFrame implements IBookM{
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting() && jTable_Books.getSelectedRow() != -1) {
-                    // Lấy dữ liệu từ bảng và yêu cầu Presenter điền vào form
-                    int selectedRow = jTable_Books.getSelectedRow();
-                    DefaultTableModel model = (DefaultTableModel) jTable_Books.getModel();
-                    
-                    String maSach = model.getValueAt(selectedRow, 0).toString();
-                    String tenSach = model.getValueAt(selectedRow, 1).toString();
-                    int soLuong = Integer.parseInt(model.getValueAt(selectedRow, 2).toString());
-                    double giaBan = Double.parseDouble(model.getValueAt(selectedRow, 3).toString()); // Đổi kiểu
-                    
-                      String tacGia     = Objects.toString(model.getValueAt(selectedRow, 4), "");
-                        String nhaXB      = Objects.toString(model.getValueAt(selectedRow, 5), "");
-                        String maDanhMuc  = Objects.toString(model.getValueAt(selectedRow, 6), "");
-                    int namXB = Integer.parseInt(model.getValueAt(selectedRow, 7).toString());
-                    String duongDanAnh = model.getValueAt(selectedRow, 8).toString(); // URL tương đối
-                    
-                    Book selectedBook = new Book(maSach, tenSach, soLuong, giaBan, tacGia, nhaXB, duongDanAnh, namXB, maDanhMuc);
-                    populateBookDetails(selectedBook); // Gọi phương thức của View
+                    presenter.onBookSelected(jTable_Books.getSelectedRow());
                 }
             }
         });
-
-        presenter.loadAllBooks(); // Yêu cầu Presenter tải dữ liệu ban đầu
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -106,50 +82,110 @@ public class BookM extends javax.swing.JFrame implements IBookM{
         });
     }
     
-    public BookM(MainMenuManagerPresenter mainMenuManagerPresenter) {
-        this.mainMenuManagerPresenter = mainMenuManagerPresenter;
-        this.mainMenuPresenter = null;
-        initComponents();
-        
-        presenter = new BookMPresenter(this);
-        
-        jTable_Books.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting() && jTable_Books.getSelectedRow() != -1) {
-                    // Lấy dữ liệu từ bảng và yêu cầu Presenter điền vào form
-                    int selectedRow = jTable_Books.getSelectedRow();
-                    DefaultTableModel model = (DefaultTableModel) jTable_Books.getModel();
-                    
-                    String maSach = model.getValueAt(selectedRow, 0).toString();
-                    String tenSach = model.getValueAt(selectedRow, 1).toString();
-                    int soLuong = Integer.parseInt(model.getValueAt(selectedRow, 2).toString());
-                    double giaBan = Double.parseDouble(model.getValueAt(selectedRow, 3).toString());
-                    
-                    String tacGia     = Objects.toString(model.getValueAt(selectedRow, 4), "");
-                    String nhaXB      = Objects.toString(model.getValueAt(selectedRow, 5), "");
-                    String maDanhMuc  = Objects.toString(model.getValueAt(selectedRow, 6), "");
-                    int namXB = Integer.parseInt(model.getValueAt(selectedRow, 7).toString());
-                    String duongDanAnh = model.getValueAt(selectedRow, 8).toString();
-                    
-                    Book selectedBook = new Book(maSach, tenSach, soLuong, giaBan, tacGia, nhaXB, duongDanAnh, namXB, maDanhMuc);
-                    populateBookDetails(selectedBook);
-                }
-            }
-        });
-
-        presenter.loadAllBooks();
-
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent windowEvent) {
-                if (mainMenuManagerPresenter != null) {
-                    mainMenuManagerPresenter.showMainMenuManager();
-                }
-            }
-        });
+   @Override
+    public String getMaSach() {
+        return jtxtMaSach.getText();
     }
-  
+
+    @Override
+    public String getTenSach() {
+        return jtxtTenSach.getText();
+    }
+
+    @Override
+    public Integer getSoLuong() {
+        try {
+            return Integer.parseInt(jtxtSoLuong.getText());
+        } catch (NumberFormatException e) {
+            return 0; // Hoặc ném ngoại lệ, hoặc trả về null tùy logic validation của bạn
+        }
+    }
+
+    @Override
+    public Double getGiaBan() {
+        try {
+            return Double.parseDouble(jtxtGia.getText());
+        } catch (NumberFormatException e) {
+            return 0.0; // Hoặc ném ngoại lệ, hoặc trả về null
+        }
+    }
+
+    @Override
+    public String getTacGia() {
+        return (String) jcbxTacGia.getSelectedItem();
+    }
+
+    @Override
+    public String getNhaXB() {
+        return (String) jcbxNhaXB.getSelectedItem();
+    }
+    
+    @Override
+    public String getDuongDanAnh() { // <--- TRIỂN KHAI GETTER MỚI
+        return jtxtAnh.getText();
+    }
+
+    @Override
+    public Integer getNamXB() {
+        try {
+            return Integer.parseInt(jtxtNamXB.getText());
+        } catch (NumberFormatException e) {
+            return 0; // Hoặc ném ngoại lệ, hoặc trả về null
+        }
+    }
+
+    @Override
+    public String getMaDanhMuc() {
+        return (String) jcbxDM.getSelectedItem();
+    }
+
+    // Các setters để điền dữ liệu vào form khi chọn sách
+    @Override
+    public void setMaSach(String maSach) {
+        jtxtMaSach.setText(maSach);
+    }
+
+    @Override
+    public void setTenSach(String tenSach) {
+        jtxtTenSach.setText(tenSach);
+    }
+
+    @Override
+    public void setSoLuong(Integer soLuong) {
+        jtxtSoLuong.setText(String.valueOf(soLuong));
+    }
+
+    @Override
+    public void setGiaBan(Double giaBan) {
+        jtxtGia.setText(String.valueOf(giaBan));
+    }
+
+    @Override
+    public void setTacGia(String tacGia) {
+        jcbxTacGia.setSelectedItem(tacGia);
+    }
+
+    @Override
+    public void setNhaXB(String nhaXB) {
+        jcbxNhaXB.setSelectedItem(nhaXB);
+    }
+    
+    @Override
+    public void setDuongDanAnh(String duongDanAnh) { // <--- TRIỂN KHAI SETTER MỚI
+        jtxtAnh.setText(duongDanAnh);
+        this.currentImagePath = duongDanAnh; // Lưu đường dẫn ảnh hiện tại
+    }
+
+    @Override
+    public void setNamXB(Integer namXB) {
+        jtxtNamXB.setText(String.valueOf(namXB));
+    }
+
+    @Override
+    public void setMaDanhMuc(String maDanhMuc) {
+        jcbxDM.setSelectedItem(maDanhMuc);
+    }
+
     @Override
     public void populateNhaXBNames(List<String> names) {
         DefaultComboBoxModel<String> nxbModel = new DefaultComboBoxModel<>();
@@ -226,6 +262,7 @@ public class BookM extends javax.swing.JFrame implements IBookM{
         if (book.getDuongDanAnh() != null && !book.getDuongDanAnh().isEmpty()) {
             updateImagePreview(book.getDuongDanAnh());
         }
+        
     }
 
     @Override
@@ -398,15 +435,6 @@ public void updateImagePreview(String imagePath) {
         });
 
         btnBack.setText("Quay lại");
-        btnBack.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                // Logic trực tiếp để tránh xung đột
-                if (mainMenuManagerPresenter != null) {
-                    mainMenuManagerPresenter.showMainMenuManager();
-                }
-                dispose();
-            }
-        });
 
         javax.swing.GroupLayout JUpperLayout = new javax.swing.GroupLayout(JUpper);
         JUpper.setLayout(JUpperLayout);
@@ -654,47 +682,11 @@ public void updateImagePreview(String imagePath) {
 
     private void jbtnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnThemActionPerformed
         // TODO add your handling code here:
-       String maSach = jtxtMaSach.getText();
-        String tenSach = jtxtTenSach.getText();
-        int soLuong = Integer.parseInt(jtxtSoLuong.getText());
-        double giaBan = Double.parseDouble(jtxtGia.getText()); // Đổi kiểu
-        String tacGia = jcbxTacGia.getSelectedItem().toString();
-        String nhaXB = jcbxNhaXB.getSelectedItem().toString();
-        int namXB = Integer.parseInt(jtxtNamXB.getText());
-        String tenDanhMuc = jcbxDM.getSelectedItem().toString();
-
-
-        String anhUrl = presenter.getUploadedImageUrl(); 
-        if (anhUrl.isEmpty() && jtxtAnh.getText() != null && !jtxtAnh.getText().isEmpty()) {
-            anhUrl = jtxtAnh.getText();
-        } else if (anhUrl.isEmpty()) {
-            anhUrl = ""; // Đảm bảo là rỗng nếu không có ảnh
-        }
-
-        Book newBook = new Book(maSach, tenSach, soLuong, giaBan, tacGia, nhaXB, anhUrl, namXB, tenDanhMuc);
-        presenter.addBook(newBook);
+       presenter.addBook(); 
     }//GEN-LAST:event_jbtnThemActionPerformed
 
     private void jbtnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnSuaActionPerformed
-        // TODO add your handling code here:
-       String maSach = jtxtMaSach.getText();
-        String tenSach = jtxtTenSach.getText();
-        int soLuong = Integer.parseInt(jtxtSoLuong.getText());
-        double giaBan = Double.parseDouble(jtxtGia.getText()); // Đổi kiểu
-        String tacGia = jcbxTacGia.getSelectedItem().toString();
-        String nhaXB = jcbxNhaXB.getSelectedItem().toString();
-        int namXB = Integer.parseInt(jtxtNamXB.getText());
-        String tenDanhMuc = jcbxDM.getSelectedItem().toString();
-
-        String anhUrl = presenter.getUploadedImageUrl();
-        if (anhUrl.isEmpty() && jtxtAnh.getText() != null && !jtxtAnh.getText().isEmpty()) {
-            anhUrl = jtxtAnh.getText();
-        } else if (anhUrl.isEmpty()) {
-            anhUrl = "";
-        }
-
-        Book updatedBook = new Book(maSach, tenSach, soLuong, giaBan, tacGia, nhaXB, anhUrl, namXB, tenDanhMuc);
-        presenter.updateBook(updatedBook); 
+       presenter.updateBook();
     }//GEN-LAST:event_jbtnSuaActionPerformed
 
     private void jbtnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnXoaActionPerformed

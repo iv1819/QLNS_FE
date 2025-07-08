@@ -4,7 +4,8 @@
  */
 package API;
 
-import Model.Book;
+import Entity.Book;
+import Model.BookDto;
 import okhttp3.*;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -38,35 +39,21 @@ private static final String BOOKS_API_PATH = "/books";
         return objectMapper.readValue(jsonResponse, Book.class);
     }
 
-    /**
-     * Thêm một sách mới vào API.
-     *
-     * @param book Đối tượng Book cần thêm.
-     * @return Đối tượng Book đã được thêm (có thể có ID do backend cấp).
-     * @throws IOException Nếu có lỗi trong quá trình kết nối hoặc phản hồi không thành công.
-     */
-    public Book addBook(Book book) throws IOException {
-        String jsonInputString = objectMapper.writeValueAsString(book); // Sử dụng objectMapper từ ApiClientBase
-        String jsonResponse = sendPostRequest(BOOKS_API_PATH, jsonInputString); // <-- Gọi sendPostRequest từ ApiClientBase
+   
+    public Book addBook(BookDto bookDto) throws IOException { // <-- THAY ĐỔI THAM SỐ
+        String jsonInputString = objectMapper.writeValueAsString(bookDto); // <-- CHUYỂN BOOKDTO THÀNH JSON
+        String jsonResponse = sendPostRequest(BOOKS_API_PATH, jsonInputString);
         return objectMapper.readValue(jsonResponse, Book.class);
     }
 
-    /**
-     * Cập nhật một sách hiện có trong API.
-     *
-     * @param book Đối tượng Book cần cập nhật (phải có ID).
-     * @return Đối tượng Book đã được cập nhật.
-     * @throws IOException Nếu có lỗi trong quá trình kết nối hoặc phản hồi không thành công.
-     * @throws IllegalArgumentException Nếu ID sách là null.
-     */
-    public Book updateBook(Book book) throws IOException {
-        if (book.getMaSach()== null) {
+     public Book updateBook(String id, BookDto bookDto) throws IOException { // <-- THAY ĐỔI THAM SỐ
+        if (id == null || id.trim().isEmpty()) { // Kiểm tra ID từ tham số
             throw new IllegalArgumentException("ID sách không được để trống khi cập nhật.");
         }
-                 System.out.println("PUT URL: " + BOOKS_API_PATH + "books/"+ book.getMaSach() + "  (len=" + book.getMaSach().length() + ")");
+        System.out.println("PUT URL: " + BOOKS_API_PATH + "/" + id + "  (len=" + id.length() + ")");
 
-        String jsonInputString = objectMapper.writeValueAsString(book);
-        String jsonResponse = sendPutRequest(BOOKS_API_PATH + "/" + book.getMaSach(), jsonInputString); // <-- Gọi sendPutRequest từ ApiClientBase
+        String jsonInputString = objectMapper.writeValueAsString(bookDto); // <-- CHUYỂN BOOKDTO THÀNH JSON
+        String jsonResponse = sendPutRequest(BOOKS_API_PATH + "/" + id, jsonInputString);
         return objectMapper.readValue(jsonResponse, Book.class);
     }
 

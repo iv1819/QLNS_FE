@@ -4,7 +4,7 @@
  */
 package View.interfaces;
 
-import Model.Book;
+import Entity.Book;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import javax.swing.table.DefaultTableModel;

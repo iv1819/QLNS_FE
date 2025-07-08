@@ -8,7 +8,8 @@ import API.AuthorApiClient;
 import API.BookApiClient;
 import API.CategoryApiClient; // Cần thiết để lấy tên danh mục
 import API.PublisherApiClient;
-import Model.Book;
+import Entity.Book;
+import Model.BookDto;
 import View.BookM;
 import View.interfaces.IBookM;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -40,7 +41,6 @@ public class BookMPresenter {
     private AuthorApiClient authorApi;
     private PublisherApiClient pubApi;
     private String selectedLocalImagePath; // Đường dẫn file cục bộ được chọn (tạm thời cho preview)
-    private String uploadedImageUrl; // URL của ảnh sau khi tải lên backend
 
     // OkHttpClient và ObjectMapper cho việc gọi API upload
     private final OkHttpClient okHttpClient;
@@ -59,7 +59,7 @@ private String currentUploadedImageUrl;
 BookM.setApiBaseUrlForImages("http://localhost:8080"); 
  this.okHttpClient = new OkHttpClient(); 
         this.selectedLocalImagePath = "";
-        this.uploadedImageUrl = "";
+        this.currentUploadedImageUrl = "";
         initializeData();
     }
 
@@ -86,38 +86,46 @@ BookM.setApiBaseUrlForImages("http://localhost:8080");
             view.clearForm();
             currentUploadedImageUrl = null; // Xóa URL ảnh đã upload
         }
-      public void onBookSelected() {
-        String maSach = view.getSelectedMaSach();
-        if (maSach == null || maSach.trim().isEmpty()) {
-            view.clearForm();
-            return;
-        }
-
+     public void onBookSelected(int selectedRow) {
         new SwingWorker<Book, Void>() {
             @Override
             protected Book doInBackground() throws Exception {
-                return bookApiClient.getBookById(maSach); // Gọi trực tiếp ApiClient
+                List<Book> allBooks = bookApiClient.getAllBooks();
+                if (selectedRow >= 0 && selectedRow < allBooks.size()) {
+                    return allBooks.get(selectedRow);
+                }
+                return null;
             }
 
             @Override
             protected void done() {
                 try {
-                    Book book = get();
-                    if (book != null) {
-                        view.populateBookDetails(book);
-                        // Cập nhật currentUploadedImageUrl với đường dẫn của sách hiện tại
-                        currentUploadedImageUrl = book.getDuongDanAnh(); 
-                    } else {
-                        view.showErrorMessage("Không tìm thấy chi tiết sách cho ID: " + maSach);
-                        view.clearForm();
+                    Book selectedBook = get();
+                    if (selectedBook != null) {
+                        view.setMaSach(selectedBook.getMaSach());
+                        view.setTenSach(selectedBook.getTenSach());
+                        view.setSoLuong(selectedBook.getSoLuong());
+                        view.setGiaBan(selectedBook.getGiaBan());
+                        view.setTacGia(selectedBook.getTacGia());
+                        view.setNhaXB(selectedBook.getNhaXB());
+                        view.setNamXB(selectedBook.getNamXB());
+                        view.setMaDanhMuc(selectedBook.getMaDanhMuc());
+
+                        // Cập nhật đường dẫn ảnh và hiển thị ảnh
+                        String imageUrl = selectedBook.getDuongDanAnh();
+                            view.setDuongDanAnh(imageUrl); // Set text cho jtxtAnh
+                            currentUploadedImageUrl = imageUrl; // Lưu lại URL ảnh hiện tại
+                            view.populateBookDetails(selectedBook);
+                        
                     }
-                } catch (InterruptedException | ExecutionException e) {
-                    view.showErrorMessage("Lỗi khi tải chi tiết sách: " + e.getMessage());
+                } catch (Exception e) {
                     e.printStackTrace();
+                    view.showErrorMessage("Lỗi khi tải dữ liệu sách: " + e.getMessage());
                 }
             }
         }.execute();
     }
+
     public void onImageSelectionRequested(File selectedFile) {
     if (selectedFile == null) return;
 
@@ -192,7 +200,7 @@ BookM.setApiBaseUrlForImages("http://localhost:8080");
      * Lấy URL ảnh đã được tải lên backend.
      */
     public String getUploadedImageUrl() {
-        return uploadedImageUrl;
+        return currentUploadedImageUrl;
     }
     
     /**
@@ -222,14 +230,24 @@ BookM.setApiBaseUrlForImages("http://localhost:8080");
      * Xử lý logic thêm sách.
      * @param book Đối tượng Book cần thêm.
      */
-    public void addBook(Book book) {
+    public void addBook() {
         // Đảm bảo book.getDuongDanAnh() chứa uploadedImageUrl
-        book.setDuongDanAnh(uploadedImageUrl);
+         // Lấy dữ liệu từ View và tạo BookDto
+        BookDto bookDto = new BookDto();
+        bookDto.setTenSach(view.getTenSach());
+        bookDto.setSoLuong(view.getSoLuong());
+        bookDto.setGiaBan(view.getGiaBan());
+        bookDto.setTacGia(view.getTacGia());
+        bookDto.setNhaXB(view.getNhaXB());
+        // Sử dụng currentUploadedImageUrl (đã được cập nhật sau khi upload ảnh)
+        bookDto.setDuongDanAnh(currentUploadedImageUrl); 
+        bookDto.setNamXB(view.getNamXB());
+        bookDto.setMaDanhMuc(view.getMaDanhMuc());
 
         new SwingWorker<Book, Void>() {
             @Override
             protected Book doInBackground() throws Exception {
-                return bookApiClient.addBook(book);
+                return bookApiClient.addBook(bookDto);
             }
 
             @Override
@@ -256,16 +274,34 @@ BookM.setApiBaseUrlForImages("http://localhost:8080");
      * Xử lý logic cập nhật sách.
      * @param book Đối tượng Book cần cập nhật.
      */
-    public void updateBook(Book book) {
+    public void updateBook() {
+        String maSach = view.getMaSach(); // Lấy mã sách từ View
+        if (maSach == null || maSach.trim().isEmpty()) {
+            view.showErrorMessage("Vui lòng chọn sách cần cập nhật.");
+            return;
+        }
+         // Lấy dữ liệu từ View và tạo BookDto
+        BookDto bookDto = new BookDto();
+        bookDto.setMaSach(maSach); // Đảm bảo ID được truyền vào DTO
+        bookDto.setTenSach(view.getTenSach());
+        bookDto.setSoLuong(view.getSoLuong());
+        bookDto.setGiaBan(view.getGiaBan());
+        bookDto.setTacGia(view.getTacGia());
+        bookDto.setNhaXB(view.getNhaXB());
+        bookDto.setNamXB(view.getNamXB());
+        bookDto.setMaDanhMuc(view.getMaDanhMuc());
         // Nếu có ảnh mới được upload, cập nhật đường dẫn ảnh
-        if (!uploadedImageUrl.isEmpty()) {
-            book.setDuongDanAnh(uploadedImageUrl);
+        if (!currentUploadedImageUrl.isEmpty()) {
+            bookDto.setDuongDanAnh(currentUploadedImageUrl);
+        }
+        else {
+            bookDto.setDuongDanAnh(view.getDuongDanAnh()); 
         }
 
         new SwingWorker<Book, Void>() {
             @Override
             protected Book doInBackground() throws Exception {
-                return bookApiClient.updateBook(book);
+                return bookApiClient.updateBook(maSach, bookDto);
             }
 
             @Override
@@ -277,6 +313,7 @@ BookM.setApiBaseUrlForImages("http://localhost:8080");
                         loadAllBooks();
                         notifyListeners();
                         view.clearForm();
+                        currentUploadedImageUrl = null;
                     } else {
                         view.showErrorMessage("Cập nhật sách thất bại.");
                     }

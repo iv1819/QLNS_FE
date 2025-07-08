@@ -4,8 +4,8 @@
  */
 package View;
 
-import Model.OD;
-import Model.Order;
+import Entity.OD;
+import Entity.Order;
 import Presenter.ODPresenter;
 import Presenter.OrderMPresenter;
 import java.util.ArrayList;

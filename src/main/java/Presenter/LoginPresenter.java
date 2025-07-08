@@ -5,7 +5,7 @@
 package Presenter;
 
 import API.LoginApiClient;
-import Model.Account;
+import Entity.Account;
 import View.interfaces.ILogin;
 import java.util.Map;
 import javax.swing.SwingWorker;

@@ -5,7 +5,7 @@
 package API;
 
 import static API.ApiClientBase.BASE_URL;
-import Model.Category;
+import Entity.Category;
 import com.fasterxml.jackson.core.type.TypeReference;
     import okhttp3.*;
     import java.io.IOException;

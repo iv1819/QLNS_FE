@@ -4,9 +4,10 @@
  */
 package View.interfaces;
 
-import Model.Book;
+import Entity.Book;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.ImageIcon;
 
 public interface IBookM {
 
@@ -28,6 +29,23 @@ public interface IBookM {
     void showMessage(String message);
 
     void showErrorMessage(String message);
-    
+String getMaSach();
+    String getTenSach();
+    Integer getSoLuong();
+    Double getGiaBan();
+    String getTacGia();
+    String getNhaXB();
+    String getDuongDanAnh(); // <--- THÊM GETTER NÀY
+    Integer getNamXB();
+    String getMaDanhMuc();
+    void setMaSach(String maSach);
+    void setTenSach(String tenSach);
+    void setSoLuong(Integer soLuong);
+    void setGiaBan(Double giaBan);
+    void setTacGia(String tacGia);
+    void setNhaXB(String nhaXB);
+    void setDuongDanAnh(String duongDanAnh); // <--- THÊM SETTER NÀY để set giá trị vào jtxtAnh
+    void setNamXB(Integer namXB);
+    void setMaDanhMuc(String maDanhMuc);
 }
 

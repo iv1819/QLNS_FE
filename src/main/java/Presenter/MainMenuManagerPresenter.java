@@ -2,6 +2,9 @@ package Presenter;
 
 import View.BookM;
 import View.EmployeeM;
+import View.MainMenu;
+import View.MainMenu_Manager2;
+import View.OrderM;
 import View.interfaces.IMainMenuManager;
 
 /**
@@ -10,21 +13,33 @@ import View.interfaces.IMainMenuManager;
  */
 public class MainMenuManagerPresenter {
     
-    private IMainMenuManager view;
-    
-    public MainMenuManagerPresenter(IMainMenuManager view) {
+    private MainMenu_Manager2 view;
+    private MainMenuPresenter main;
+    public MainMenuManagerPresenter(MainMenu_Manager2 view, MainMenuPresenter mainMenu) {
         this.view = view;
+        this.main = mainMenu;
     }
     
     /**
      * Mở form quản lý sách
      */
     public void openBookManagement() {
-        BookM bookManagementFrame = new BookM(this);
+        BookM bookManagementFrame = new BookM(main);
         bookManagementFrame.setVisible(true);
+    }
+    public void openAccount() {
+    }
+    public void openNXB() {
+    }
+    public void openAuthor() {
+    }
+    public void openOrder() {
+        OrderM orderM = new OrderM();
+        orderM.setVisible(true);
         view.setVisible(false); // Ẩn MainMenuManager
     }
-    
+    public void openCustomer() {
+    }
     /**
      * Mở form quản lý nhân viên
      */

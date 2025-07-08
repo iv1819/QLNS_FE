@@ -6,8 +6,8 @@ package Presenter;
 
 import API.ODApiClient;
 import API.OrderApiClient;
-import Model.OD;
-import Model.Order;
+import Entity.OD;
+import Entity.Order;
 import View.OrderM;
 import java.util.ArrayList;
 import java.util.List;

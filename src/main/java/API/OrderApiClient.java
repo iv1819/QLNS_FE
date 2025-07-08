@@ -4,9 +4,9 @@
  */
 package API;
 
-import Model.Author;
-import Model.OD;
-import Model.Order;
+import Entity.Author;
+import Entity.OD;
+import Entity.Order;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.net.URLEncoder;

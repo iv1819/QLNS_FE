@@ -5,8 +5,8 @@
 package Presenter;
 
 import API.ODApiClient;
-import Model.Book;
-import Model.OD;
+import Entity.Book;
+import Entity.OD;
 import View.OrderM;
 import java.io.IOException;
 import java.util.ArrayList;

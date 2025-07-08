@@ -4,7 +4,7 @@
  */
 package View;
 
-import Model.Book;
+import Entity.Book;
 import Presenter.MainMenuPresenter; // Import MainMenuPresenter
 import java.awt.*;
 import java.awt.event.MouseAdapter;

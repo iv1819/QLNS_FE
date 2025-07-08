@@ -14,7 +14,7 @@ import View.Category;
  * @author nam11
  */
 public class CategoryP {
-    private Model.Category categoryM;
+    private Entity.Category categoryM;
     private Category view;
     private CategoryApiClient apiClient;
     public CategoryP(Category view) {
@@ -36,9 +36,9 @@ public class CategoryP {
     }
     public void addCategory(String categoryName) {
         try {
-            Model.Category newCategory = new Model.Category();
+            Entity.Category newCategory = new Entity.Category();
             newCategory.setTenDanhMuc(categoryName); // Assumes Category has setName()
-            Model.Category addedCategory = apiClient.addCategory(newCategory);
+            Entity.Category addedCategory = apiClient.addCategory(newCategory);
             view.displaySuccess("Thêm danh mục " + addedCategory.getTenDanhMuc());
             loadAllCategories(); // Reload categories after adding
         } catch (Exception e) {
@@ -54,10 +54,10 @@ public class CategoryP {
         try {
             // Lấy mã danh mục từ tên cũ
             String maDanhMuc = apiClient.getIdByTenDanhMuc(oldCategoryName);
-            Model.Category updatedCategory = new Model.Category();
+            Entity.Category updatedCategory = new Entity.Category();
             updatedCategory.setMaDanhMuc(maDanhMuc);
             updatedCategory.setTenDanhMuc(newCategoryName); // Assumes Category has setName()
-            Model.Category result = apiClient.updateCategory(updatedCategory);
+            Entity.Category result = apiClient.updateCategory(updatedCategory);
             view.displaySuccess("Cập nhật danh mục thành công: " + result.getTenDanhMuc());
             loadAllCategories(); // Reload categories after updating
         } catch (Exception e) {

@@ -87,7 +87,8 @@ public abstract class ApiClientBase { // Đã chuyển thành abstract vì nó k
                 String errorBody = response.body() != null ? response.body().string() : "No error body";
                 Logger.getLogger(ApiClientBase.class.getName()).log(Level.SEVERE,
                         "POST request to " + path + " failed: " + response.code() + " - " + response.message() + " - " + errorBody);
-                throw new IOException("POST request to " + BASE_URL + path + " failed: " + response.code() + " " + response.message());
+                throw new IOException("POST request to " + BASE_URL + path + " failed: " + response.code() + " " + response.message() + " - " + errorBody);
+
             }
             return response.body().string();
         }
@@ -113,7 +114,8 @@ public abstract class ApiClientBase { // Đã chuyển thành abstract vì nó k
                 String errorBody = response.body() != null ? response.body().string() : "No error body";
                 Logger.getLogger(ApiClientBase.class.getName()).log(Level.SEVERE,
                         "PUT request to " + path + " failed: " + response.code() + " - " + response.message() + " - " + errorBody);
-                throw new IOException("PUT request to " + BASE_URL + path + " failed: " + response.code() + " " + response.message());
+                throw new IOException("PUT request to " + BASE_URL + path + " failed: " + response.code() + " " + response.message() + " - " + errorBody);
+
             }
             return response.body().string();
         }
@@ -136,7 +138,7 @@ public abstract class ApiClientBase { // Đã chuyển thành abstract vì nó k
                 String errorBody = response.body() != null ? response.body().string() : "No error body";
                 Logger.getLogger(ApiClientBase.class.getName()).log(Level.SEVERE,
                         "DELETE request to " + path + " failed: " + response.code() + " - " + response.message() + " - " + errorBody);
-                throw new IOException("DELETE request to " + BASE_URL + path + " failed: " + response.code() + " " + response.message());
+                throw new IOException("DELETE request to " + BASE_URL + path + " failed: " + response.code() + " " + response.message() + " - " + errorBody);
             }
             // Đối với DELETE, thường không có body trả về, chỉ cần kiểm tra success
         }
