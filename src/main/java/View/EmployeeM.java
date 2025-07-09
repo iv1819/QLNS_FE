@@ -174,6 +174,11 @@ public class EmployeeM extends javax.swing.JFrame implements IEmployeeM {
         JPanel_Top.setBackground(new java.awt.Color(0, 0, 102));
 
         btnBack.setText("Quay lại");
+        btnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackActionPerformed(evt);
+            }
+        });
 
         btnThem.setText("Thêm");
 

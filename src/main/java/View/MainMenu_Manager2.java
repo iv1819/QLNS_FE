@@ -58,11 +58,17 @@ setLocationRelativeTo(null);
         
         btnPublisher.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Publisher publisher = new Publisher();
+                publisher.setVisible(true);
+                dispose();
                
             }
         });
         btnCategoryM.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Category category = new Category();
+                category.setVisible(true);
+                dispose();
                 
             }
         });
@@ -140,6 +146,11 @@ setLocationRelativeTo(null);
         btnBack.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnBack.setForeground(new java.awt.Color(255, 255, 255));
         btnBack.setText("Quay lại");
+        btnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackActionPerformed(evt);
+            }
+        });
 
         btnBookM.setBackground(new java.awt.Color(0, 51, 102));
         btnBookM.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -165,6 +176,11 @@ setLocationRelativeTo(null);
         btnEmployeeM.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnEmployeeM.setForeground(new java.awt.Color(255, 255, 255));
         btnEmployeeM.setText("Quản lí nhân viên");
+        btnEmployeeM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEmployeeMActionPerformed(evt);
+            }
+        });
 
         btnCustomerM.setBackground(new java.awt.Color(0, 51, 102));
         btnCustomerM.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -259,6 +275,14 @@ setLocationRelativeTo(null);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnEmployeeMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmployeeMActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnEmployeeMActionPerformed
+
+    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnBackActionPerformed
 
     /**
      * @param args the command line arguments
