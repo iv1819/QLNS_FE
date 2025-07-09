@@ -4,6 +4,12 @@
  */
 package View;
 
+import java.util.List;
+
+import javax.swing.table.DefaultTableModel;
+
+import Presenter.PublisherP;
+
 /**
  *
  * @author nam11
@@ -15,6 +21,19 @@ public class Publisher extends javax.swing.JFrame {
      */
     public Publisher() {
         initComponents();
+        PublisherP publisherPresenter = new PublisherP(this);
+        publisherPresenter.loadAllPublishers();
+    }
+        
+    
+    public void displayPublishers(List<Model.Publisher> publishers) {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0); // Clear existing rows
+        for (Model.Publisher publisher : publishers) {
+            model.addRow(new Object[]{
+                publisher.getMaNXB(), publisher.getTenNXB(), publisher.getSdt()
+            });
+        }
     }
 
     /**
@@ -35,9 +54,9 @@ public class Publisher extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btnAdd = new javax.swing.JButton();
+        btnEdit = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -80,16 +99,26 @@ public class Publisher extends javax.swing.JFrame {
 
         jLabel3.setText("Số Điện Thoại");
 
-        jButton1.setText("Thêm ");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnAdd.setText("Thêm ");
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnAddActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Sửa");
+        btnEdit.setText("Sửa");
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
 
-        jButton3.setText("Xóa");
+        btnDelete.setText("Xóa");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -106,9 +135,9 @@ public class Publisher extends javax.swing.JFrame {
                     .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnAdd, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
+                    .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(99, 99, 99))
         );
         jPanel3Layout.setVerticalGroup(
@@ -124,11 +153,11 @@ public class Publisher extends javax.swing.JFrame {
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jButton1)
+                .addComponent(btnAdd)
                 .addGap(9, 9, 9)
-                .addComponent(jButton2)
+                .addComponent(btnEdit)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton3)
+                .addComponent(btnDelete)
                 .addGap(0, 39, Short.MAX_VALUE))
         );
 
@@ -140,6 +169,11 @@ public class Publisher extends javax.swing.JFrame {
                 "Mã NXB", "Tên NXB", "SĐT"
             }
         ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -189,9 +223,58 @@ public class Publisher extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+        String tenNXB = jTextField1.getText().trim();
+        String sdt = jTextField2.getText().trim();
+        Presenter.PublisherP publisherPresenter = new Presenter.PublisherP(this);
+        publisherPresenter.addPublisher(tenNXB, sdt);
+        jTextField1.setText("");
+    }//GEN-LAST:event_btnAddActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow != -1) {
+            String maNXB = jTable1.getValueAt(selectedRow, 0).toString();
+            String tenNXB = jTable1.getValueAt(selectedRow, 1).toString();
+            String sdt = jTable1.getValueAt(selectedRow, 2).toString();
+
+            jTextField1.setText(tenNXB);
+            jTextField2.setText(sdt);
+        } else {
+            jTextField1.setText("");
+            jTextField2.setText("");
+        }
+    }//GEN-LAST:event_jTable1MouseClicked
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow != -1) {
+            String maNXB = jTable1.getValueAt(selectedRow, 0).toString();
+            Presenter.PublisherP publisherPresenter = new Presenter.PublisherP(this);
+            publisherPresenter.deletePublisher(maNXB);
+            
+            
+        } else {
+            showError("Vui lòng chọn một nhà xuất bản để xóa.");
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow != -1) {
+            String maNXB = jTable1.getValueAt(selectedRow, 0).toString();
+            String tenNXB = jTextField1.getText().trim();
+            String sdt = jTextField2.getText().trim();
+            Presenter.PublisherP publisherPresenter = new Presenter.PublisherP(this);
+            publisherPresenter.updatePublisher(maNXB, tenNXB, sdt);
+        } else {
+            showError("Vui lòng chọn một nhà xuất bản để sửa.");
+        }
+    }//GEN-LAST:event_btnEditActionPerformed
 
     /**
      * @param args the command line arguments
@@ -229,9 +312,9 @@ public class Publisher extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnEdit;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -245,4 +328,14 @@ public class Publisher extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
+    
+    public void showError(String string) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+
+    public void showSuccess(String string) {
+        // TODO Auto-generated method stub
+        javax.swing.JOptionPane.showMessageDialog(this, string, "Success", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+    }
 }

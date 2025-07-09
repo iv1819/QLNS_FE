@@ -19,7 +19,6 @@ View\MainMenu$3.class
 View\interfaces\IMainMenu.class
 View\interfaces\IMainMenuManager.class
 View\BookM$6.class
-View\EmployeeM$7.class
 View\MaterialTabbed.class
 API\LoginApiClient.class
 Presenter\BookMPresenter$1.class
