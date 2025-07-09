@@ -137,4 +137,13 @@ public class EmployeeApiClient extends ApiClientBase {
         Employee[] employeesArray = objectMapper.readValue(jsonResponse, Employee[].class);
         return Arrays.asList(employeesArray);
     }
+
+    /**
+     * Lấy mã nhân viên tự động từ API.
+     * @return Mã nhân viên mới dạng NVxxx
+     * @throws IOException Nếu có lỗi kết nối
+     */
+    public String getAutoEmployeeId() throws IOException {
+        return sendGetRequest(EMPLOYEES_API_PATH + "/auto-id");
+    }
 } 

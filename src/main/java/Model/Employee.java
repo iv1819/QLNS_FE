@@ -20,19 +20,21 @@ public class Employee {
     private LocalDate ngayVaoLam;
     private String sdt;
     private BigDecimal luong;
+    private String tenCv;
 
     // Constructor mặc định
     public Employee() {
     }
 
     // Constructor với tham số
-    public Employee(String maNv, String tenNv, LocalDate ngaySinh, LocalDate ngayVaoLam, String sdt, BigDecimal luong) {
+    public Employee(String maNv, String tenNv, LocalDate ngaySinh, LocalDate ngayVaoLam, String sdt, BigDecimal luong, String tenCv) {
         this.maNv = maNv;
         this.tenNv = tenNv;
         this.ngaySinh = ngaySinh;
         this.ngayVaoLam = ngayVaoLam;
         this.sdt = sdt;
         this.luong = luong;
+        this.tenCv = tenCv;
     }
 
     // Getters và Setters
@@ -84,6 +86,13 @@ public class Employee {
         this.luong = luong;
     }
 
+    public String getTenCv() {
+        return tenCv;
+    }
+    public void setTenCv(String tenCv) {
+        this.tenCv = tenCv;
+    }
+
     // Utility methods để convert giữa LocalDate và Date
     public Date getNgaySinhAsDate() {
         if (ngaySinh == null) return null;
@@ -120,6 +129,7 @@ public class Employee {
                 ", ngayVaoLam=" + ngayVaoLam +
                 ", sdt='" + sdt + '\'' +
                 ", luong=" + luong +
+                ", tenCv='" + tenCv + '\'' +
                 '}';
     }
 }

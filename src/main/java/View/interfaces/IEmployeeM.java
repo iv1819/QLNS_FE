@@ -91,4 +91,10 @@ public interface IEmployeeM {
      * @param date Date object cần set
      */
     void setNgayVaoLamToDateChooser(Date date);
+    
+    /**
+     * Set mã nhân viên cho trường mã nhân viên trên form
+     * @param maNv mã nhân viên mới
+     */
+    void setMaNv(String maNv);
 } 

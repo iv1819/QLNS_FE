@@ -92,7 +92,9 @@ public class EmployeeMPresenter {
                     loadAllEmployees(); // Tải lại danh sách
                     notifyListeners(); // Thông báo thay đổi
                 } catch (InterruptedException | ExecutionException e) {
-                    view.showErrorMessage("Lỗi khi thêm nhân viên: " + e.getMessage());
+                    Throwable cause = e.getCause();
+                    String detailMsg = extractErrorMessage(cause);
+                    view.showErrorMessage("Lỗi khi thêm nhân viên: " + detailMsg);
                     e.printStackTrace();
                 }
             }
@@ -116,8 +118,9 @@ public class EmployeeMPresenter {
                 });
             } catch (IOException e) {
                 // Khi có lỗi, hiển thị và khôi phục lại form
+                String detailMsg = extractErrorMessage(e);
                 SwingUtilities.invokeLater(() -> {
-                    view.showErrorMessage("Lỗi khi cập nhật nhân viên: " + e.getMessage());
+                    view.showErrorMessage("Lỗi khi cập nhật nhân viên: " + detailMsg);
                     if (currentEmployee != null) {
                         view.populateEmployeeDetails(currentEmployee); // Khôi phục lại dữ liệu gốc
                     }
@@ -146,7 +149,9 @@ public class EmployeeMPresenter {
                     loadAllEmployees(); // Tải lại danh sách
                     notifyListeners(); // Thông báo thay đổi
                 } catch (InterruptedException | ExecutionException e) {
-                    view.showErrorMessage("Lỗi khi xóa nhân viên: " + e.getMessage());
+                    Throwable cause = e.getCause();
+                    String detailMsg = extractErrorMessage(cause);
+                    view.showErrorMessage("Lỗi khi xóa nhân viên: " + detailMsg);
                     e.printStackTrace();
                 }
             }
@@ -281,6 +286,7 @@ public class EmployeeMPresenter {
         view.clearForm();
         view.clearTableSelection();
         view.updateButtonStates(false); // Chế độ thêm mới
+        setAutoEmployeeId(); // Gọi hàm để lấy mã NV tự động
     }
 
     /**
@@ -288,6 +294,28 @@ public class EmployeeMPresenter {
      */
     private void initializeData() {
         loadAllEmployees();
+        setAutoEmployeeId(); // Gọi hàm để lấy mã NV tự động khi khởi tạo form
+    }
+
+    /**
+     * Lấy mã nhân viên tự động từ backend và set vào view
+     */
+    public void setAutoEmployeeId() {
+        new SwingWorker<String, Void>() {
+            @Override
+            protected String doInBackground() throws Exception {
+                return employeeApiClient.getAutoEmployeeId().replaceAll("\"", ""); // loại bỏ dấu " nếu có
+            }
+            @Override
+            protected void done() {
+                try {
+                    String autoId = get();
+                    view.setMaNv(autoId);
+                } catch (Exception e) {
+                    view.setMaNv("NV001");
+                }
+            }
+        }.execute();
     }
 
     // Đăng ký listener (từ MainMenu)
@@ -298,5 +326,32 @@ public class EmployeeMPresenter {
     // Hủy đăng ký listener
     public void removeListener(MainMenuPresenter listener) {
         this.mainMenuListener = null;
+    }
+
+    /**
+     * Trích xuất thông báo lỗi chi tiết từ exception (nếu có JSON lỗi trả về từ backend)
+     */
+    private String extractErrorMessage(Throwable cause) {
+        if (cause == null) return "";
+        String msg = cause.getMessage();
+        if (msg == null) return "";
+        // Nếu message chứa JSON lỗi, cố gắng parse
+        int jsonStart = msg.indexOf("{");
+        if (jsonStart != -1) {
+            String json = msg.substring(jsonStart);
+            try {
+                // Parse JSON lỗi dạng {"field":"message",...}
+                java.util.Map<?,?> map = new com.fasterxml.jackson.databind.ObjectMapper().readValue(json, java.util.Map.class);
+                StringBuilder sb = new StringBuilder();
+                for (Object key : map.keySet()) {
+                    sb.append(key).append(": ").append(map.get(key)).append("\n");
+                }
+                return sb.toString().trim();
+            } catch (Exception ex) {
+                // Nếu không parse được thì trả về raw JSON
+                return json;
+            }
+        }
+        return msg;
     }
 } 
