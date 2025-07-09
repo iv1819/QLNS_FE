@@ -43,8 +43,7 @@ setLocationRelativeTo(null);
             // Xử lý nút Quản lý nhân viên
             btnEmployeeM.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    EmployeeM emM = new EmployeeM();
-                    emM.setVisible(true);
+                    manager.openEmployeeManagement();
                     dispose();
                 }
             });
@@ -52,7 +51,8 @@ setLocationRelativeTo(null);
              // Xử lý nút Quản lý khách hàng
         btnCustomerM.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                
+                manager.openCustomer();
+                dispose();
             }
         });        
         
@@ -104,7 +104,8 @@ setLocationRelativeTo(null);
         // Xử lý nút Quản lý khách hàng
         btnCustomerM.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-              
+                manager.openCustomer();
+                dispose();
             }
         });
         btnPublisher.addActionListener(new java.awt.event.ActionListener() {

@@ -16,6 +16,11 @@ View\Category$3.class
 Presenter\EmployeeMPresenter$1.class
 View\MainMenu$3.class
 View\interfaces\IMainMenu.class
+<<<<<<< Updated upstream
+=======
+View\interfaces\IMainMenuManager.class
+View\BookM$6.class
+>>>>>>> Stashed changes
 View\MaterialTabbed.class
 API\LoginApiClient.class
 Presenter\BookMPresenter$1.class

@@ -8,6 +8,7 @@ import Presenter.EmployeeMPresenter;
 import Presenter.MainMenuPresenter;
 import Presenter.MainMenuManagerPresenter;
 import Model.Employee;
+import View.MainMenu;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -355,9 +356,14 @@ public class EmployeeM extends javax.swing.JFrame implements IEmployeeM {
 
     // Event handlers
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
-        // Quay lại MainMenu_Manager2
-        new MainMenu_Manager2(null, null, true).setVisible(true); // Truyền tham số phù hợp nếu cần
-        this.dispose();
+        if (mainMenuManagerPresenter != null) {
+            mainMenuManagerPresenter.showMainMenuManager();
+            this.dispose();
+        } else {
+            // Fallback nếu không có MainMenuManagerPresenter
+            new MainMenu().setVisible(true);
+            this.dispose();
+        }
     }//GEN-LAST:event_btnBackActionPerformed
 
     private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
@@ -397,6 +403,7 @@ public class EmployeeM extends javax.swing.JFrame implements IEmployeeM {
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {
         clearForm();
         presenter.setAutoEmployeeId();
+        presenter.loadAllEmployees(); // Thêm dòng này để load lại danh sách
     }
 
     // Implementation của interface IEmployeeM

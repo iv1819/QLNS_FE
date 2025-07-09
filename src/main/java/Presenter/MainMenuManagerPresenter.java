@@ -1,6 +1,7 @@
 package Presenter;
 
 import View.BookM;
+import View.CustomerM;
 import View.EmployeeM;
 import View.MainMenu;
 import View.MainMenu_Manager2;
@@ -39,6 +40,9 @@ public class MainMenuManagerPresenter {
         view.setVisible(false); // Ẩn MainMenuManager
     }
     public void openCustomer() {
+        CustomerM customerManagementFrame = new CustomerM(this);
+        customerManagementFrame.setVisible(true);
+        view.setVisible(false); // Ẩn MainMenuManager
     }
     /**
      * Mở form quản lý nhân viên
