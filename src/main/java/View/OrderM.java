@@ -8,8 +8,10 @@ import Model.OD;
 import Model.Order;
 import Presenter.ODPresenter;
 import Presenter.OrderMPresenter;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Vector;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -20,27 +22,28 @@ import javax.swing.table.DefaultTableModel;
  * @author Admin
  */
 public class OrderM extends javax.swing.JFrame {
-    private OrderMPresenter orderPresenter;
-    private ODPresenter odPresenter;
+    private OrderMPresenter orderPre;
+    private ODPresenter odPre;
+    private MainMenu mainmenu;
     // Lưu đường dẫn ảnh hiện tại
     /**
      * Creates new form BookM
      */
     public OrderM() {
         initComponents();
-        orderPresenter = new OrderMPresenter(this);
-        odPresenter = new ODPresenter(this);
+        setLocationRelativeTo(null); 
+        orderPre = new OrderMPresenter(this);
 
         jtblOrder.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting() && jtblOrder.getSelectedRow() != -1) {
                     displaySelectedDH();
-                    odPresenter.loadODByMaDH(jtxtMaDH.getText());
+                    odPre.loadODByMaDH(jtxtMaDH.getText());
                 }
             }
         });
-        orderPresenter.loadOrders();
+        orderPre.loadOrders();
     }
     
 public void displayOrder(ArrayList<Order> orders) {
@@ -53,13 +56,15 @@ public void displayOrder(ArrayList<Order> orders) {
         dtm.addColumn("Tên khách hàng");
         dtm.addColumn("Ngày bán");
         dtm.addColumn("Tổng tiền");
-
+        dtm.addColumn("Nhân viên");
         for (Order order : orders) {
             Vector<Object> row = new Vector<>();
             row.add(order.getMaDH());
             row.add(order.getTenKH());
             row.add(order.getNgayBan());
             row.add(order.getTongTien());
+            row.add(order.getTennv());
+
             dtm.addRow(row);
         }
     }
@@ -73,6 +78,8 @@ public void displayOD(ArrayList<OD> ods) {
         dtm.addColumn("Tên sản phẩm");
         dtm.addColumn("Số lượng");
         dtm.addColumn("Đơn giá");
+        dtm.addColumn("Tổng tiền sản phẩm");
+
         dtm.addColumn("Mã đơn hàng");
 
         for (OD od : ods) {
@@ -81,6 +88,7 @@ public void displayOD(ArrayList<OD> ods) {
             row.add(od.getTenSach());
             row.add(od.getSoLuong());
             row.add(od.getDonGia());
+            row.add(od.getTongTien());
             row.add(od.getMaDH());
 
             dtm.addRow(row);
@@ -100,6 +108,7 @@ private void displaySelectedDH() {
         jtxtTongTien.setText(model.getValueAt(selectedRow, 3).toString());
     }
 }
+
 
   public void showMessage(String message) {
         JOptionPane.showMessageDialog(this, message);
@@ -126,7 +135,6 @@ private void displaySelectedDH() {
         JUpper = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jbtnXoa = new javax.swing.JButton();
-        btnBack = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jtblOrder = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -139,8 +147,10 @@ private void displaySelectedDH() {
         jtxtNgayBan = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jtxtTongTien = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         JUpper.setBackground(new java.awt.Color(0, 0, 102));
         JUpper.setForeground(new java.awt.Color(242, 242, 242));
@@ -149,17 +159,11 @@ private void displaySelectedDH() {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Quản lí đơn hàng");
 
+        jbtnXoa.setBackground(new java.awt.Color(254, 255, 255));
         jbtnXoa.setText("Xóa");
         jbtnXoa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbtnXoaActionPerformed(evt);
-            }
-        });
-
-        btnBack.setText("Quay lại");
-        btnBack.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBackActionPerformed(evt);
             }
         });
 
@@ -170,8 +174,6 @@ private void displaySelectedDH() {
             .addGroup(JUpperLayout.createSequentialGroup()
                 .addGap(9, 9, 9)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34)
-                .addComponent(btnBack)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jbtnXoa)
                 .addGap(10, 10, 10))
@@ -182,10 +184,8 @@ private void displaySelectedDH() {
                 .addGap(20, 20, 20)
                 .addGroup(JUpperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jbtnXoa)
-                    .addGroup(JUpperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel1)
-                        .addComponent(btnBack)))
-                .addContainerGap(20, Short.MAX_VALUE))
+                    .addComponent(jLabel1))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         jtblOrder.setModel(new javax.swing.table.DefaultTableModel(
@@ -234,6 +234,11 @@ private void displaySelectedDH() {
         jtxtTongTien.setEditable(false);
         jtxtTongTien.setText("jTextField4");
 
+        jLabel6.setText("Tên nhân viên");
+
+        jTextField1.setEditable(false);
+        jTextField1.setText("jTextField1");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -249,12 +254,14 @@ private void displaySelectedDH() {
                         .addGap(18, 18, 18))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE))
+                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jtxtTenKH, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
-                            .addComponent(jtxtMaDH))
+                            .addComponent(jtxtMaDH)
+                            .addComponent(jTextField1))
                         .addGap(114, 114, 114)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
@@ -284,7 +291,11 @@ private void displaySelectedDH() {
                     .addComponent(jtxtTenKH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(jtxtTongTien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -303,15 +314,9 @@ private void displaySelectedDH() {
         }
         int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn xóa đơn hàng này?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            orderPresenter.deleteOrder(maDH);
+            orderPre.deleteOrder(maDH);
         }
     }//GEN-LAST:event_jbtnXoaActionPerformed
-
-    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
-        MainMenu_Manager2 managerFrame = new MainMenu_Manager2();
-        managerFrame.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnBackActionPerformed
 
     /**
      * @param args the command line arguments
@@ -350,14 +355,15 @@ private void displaySelectedDH() {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel JUpper;
-    private javax.swing.JButton btnBack;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextField jTextField1;
     private javax.swing.JButton jbtnXoa;
     private javax.swing.JTable jtblOD;
     private javax.swing.JTable jtblOrder;

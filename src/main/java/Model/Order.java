@@ -15,7 +15,15 @@ public class Order {
     private String tenKH;
     private Date ngayBan;
     private double tongTien;
+    private String tennv;
 
+    public String getTennv() {
+        return tennv;
+    }
+
+    public void setTennv(String tennv) {
+        this.tennv = tennv;
+    }
     public String getMaDH() {
         return maDH;
     }
@@ -51,13 +59,13 @@ public class Order {
         this.tongTien = tongTien;
     }
 
-    public Order(String maDH, String tenKH, Date ngayBan, double tongTien) {
-        this.maDH = maDH;
+    public Order(String tenKH, double tongTien, String tennv) {
         this.tenKH = tenKH;
-        this.ngayBan = ngayBan;
         this.tongTien = tongTien;
+        this.tennv = tennv;
     }
 
+ 
     public Order() {
     }
 }

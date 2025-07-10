@@ -4,7 +4,7 @@
  */
 package View;
 
-import API.LoginApiClient;
+import API.AccountApiClient;
 import Presenter.LoginPresenter;
 import View.interfaces.ILogin;
 import javax.swing.JOptionPane;
@@ -21,7 +21,7 @@ public class Login extends javax.swing.JFrame implements ILogin{
         setLocationRelativeTo(null);      // luôn ở giữa
 
         // Khởi tạo Presenter & Model
-        presenter = new LoginPresenter(this, new LoginApiClient());
+        presenter = new LoginPresenter(this, new AccountApiClient());
 
         // Sự kiện nút Login → Presenter
         jbtnDN.addActionListener(e -> presenter.onLoginClicked());
@@ -42,13 +42,15 @@ public class Login extends javax.swing.JFrame implements ILogin{
         JOptionPane.showMessageDialog(this, msg);
     }
 
-    /** isManager = true → mở MainMenu_Manager; else MainMenu (nhân viên) */
+    /** isManager = true → mở MainMenu_Manager; else MainMenu (nhân viên)
+     * @param isManager
+     * @param tennv */
     @Override
-    public void navigateToMain(boolean isManager) {
+    public void navigateToMain(boolean isManager, String tennv) {
         if (isManager) {
-            new MainMenu(true).setVisible(true);
+            new MainMenu(true,tennv).setVisible(true);
         } else {
-            new MainMenu(false).setVisible(true);
+            new MainMenu(false, tennv).setVisible(true);
         }
         dispose();                            // đóng form login
     }

@@ -18,7 +18,6 @@ public interface IMainMenu {
     void showErrorMessage(String message);
     void updateReceiptTotal(boolean hasDiscount);
     void clearReceiptTable();
-    void populateComboBox();
     double LayTongTien();
     DefaultTableModel getReceiptTableModel();
 }

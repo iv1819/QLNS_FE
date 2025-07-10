@@ -25,7 +25,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
-
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileOutputStream;
 
 public class MainMenuPresenter implements BookDataChangeListener {
 
@@ -74,18 +78,27 @@ public class MainMenuPresenter implements BookDataChangeListener {
     /* Giữ trạng thái */
     private String currentCustomerName = null;
 
-    public void onCustomerSelected(Object sel) {
-        currentCustomerName = (sel == null) ? null : sel.toString().trim();
-        recalcTotal();                         // tính lại tổng ngay
+   public String onCustomerSelected(String sel) {
+    currentCustomerName = null;
+    // Check if sel is null, empty, or not a number (only digits)
+    if(sel == null|| sel.trim().isEmpty() ||!sel.matches("\\d+")){
+        System.out.println("trong " + currentCustomerName);
     }
-    private void recalcTotal() {
-        boolean hasCustomer =
-            currentCustomerName != null &&
-            !currentCustomerName.isEmpty() &&
-            !currentCustomerName.equalsIgnoreCase("--Chọn khách hàng--");
+    else{
+        //String tenKH = cusConnect.timKhachHangSDT(sel.trim());
+        //currentCustomerName = tenKH;
+    }
+    
+    recalcTotal(); // Tính lại tổng ngay
+    return currentCustomerName; // Return the customer name or null
+}
 
-        view.updateReceiptTotal(hasCustomer);  // truyền cờ giảm giá
+    /* Bất cứ khi nào bảng hóa đơn thay đổi, gọi hàm này */
+    private void recalcTotal() {
+
+        view.updateReceiptTotal(currentCustomerName != null);  // truyền cờ giảm giá
     }
+
     public void onBookItemSelected(Book book) {
         this.currentSelectedBookForReceipt = book;
         view.updateSelectedBook(book);
@@ -157,7 +170,7 @@ public void onAddReceiptItemClicked(int quantity) {
             int rand = ThreadLocalRandom.current().nextInt(100000, 999999);
             return "dh_" + rand;
         }
-public void onCheckoutClicked(String tenkh) {
+public void onCheckoutClicked(String tenkh, String tennv) {
     DefaultTableModel model = view.getReceiptTableModel();
 
     if (model.getRowCount() == 0) {
@@ -165,12 +178,9 @@ public void onCheckoutClicked(String tenkh) {
         return;
     }
 
-    String maDH = generateOrderId(); // vd: dh_123456789
-    LocalDateTime ngayBan = LocalDateTime.now();
-    java.sql.Date ngayBanOnlyDate = java.sql.Date.valueOf(ngayBan.toLocalDate());
     double tongTien = view.LayTongTien();
 
-    Order newOrder = new Order(maDH, tenkh, ngayBanOnlyDate, tongTien);
+    Order newOrder = new Order(tenkh, tongTien, tennv);
 
     // Gọi API tạo đơn hàng
     new SwingWorker<Order, Void>() {
@@ -183,6 +193,8 @@ public void onCheckoutClicked(String tenkh) {
         protected void done() {
             try {
                 Order addedOrder = get();
+                List<OD> ctdhs = new ArrayList<>();
+                
                 if (addedOrder != null) {
                     view.showMessage("Thêm đơn hàng thành công.");
 
@@ -192,7 +204,7 @@ public void onCheckoutClicked(String tenkh) {
 
                     for (int row = 0; row < totalRows; row++) {
                         OD detail = new OD();
-                        detail.setMaDH(maDH);
+                        detail.setMaDH(addedOrder.getMaDH());
                         Object tenSPObj = model.getValueAt(row, 0);
                             if (tenSPObj == null || tenSPObj.toString().trim().isEmpty()) {
                                 view.showErrorMessage("Tên sản phẩm ở dòng " + (row + 1) + " đang bị trống.");
@@ -202,11 +214,12 @@ public void onCheckoutClicked(String tenkh) {
 
                         detail.setSoLuong((Integer) model.getValueAt(row, 1));
                         detail.setDonGia(parseMoney(model.getValueAt(row, 2).toString()));
+                        detail.setTongTien(parseMoney(model.getValueAt(row, 3).toString()));
 
                         new SwingWorker<OD, Void>() {
                             @Override
                             protected OD doInBackground() throws Exception {
-                                System.out.println("Đang thêm CTDH: tenSP=" + detail.getTenSach()+ ", soLuong=" + detail.getSoLuong() + ", donGia=" + detail.getDonGia());
+                                System.out.println("Đang thêm CTDH: tenSP=" + detail.getTenSach()+ ", soLuong=" + detail.getSoLuong() + ", donGia=" + detail.getDonGia()+ "tongtien= "+ detail.getTongTien());
 
                                 return odApiClient.addOD(detail);
                             }
@@ -218,12 +231,48 @@ public void onCheckoutClicked(String tenkh) {
                                     if (addedOD == null) {
                                         view.showErrorMessage("Thêm CTDH thất bại.");
                                     }
+                                    else{
+                                         String tenSP = detail.getTenSach();
+                                        int soLuongMua = detail.getSoLuong();
+                                        // --- START: Added code for book quantity update ---
+                                        new SwingWorker<Void, Void>() {
+                                            @Override
+                                            protected Void doInBackground() throws Exception {
+                                               
+                                                List<Book> books = bookApiClient.searchBooks(tenSP);
+                                                if (books != null && !books.isEmpty()) {
+                                                    Book bookToUpdate = books.get(0); // Assuming the first result is the correct book
+                                                    int currentSoLuong = bookToUpdate.getSoLuong();
+                                                    bookToUpdate.setSoLuong(currentSoLuong - soLuongMua);
+                                                    bookApiClient.updateBook(bookToUpdate.getMaSach(),bookToUpdate); // Update the book
+                                                } else {
+                                                    throw new Exception("Không tìm thấy sách với tên: " + tenSP);
+                                                }
+                                                return null;
+                                            }
+
+                                            @Override
+                                            protected void done() {
+                                                try {
+                                                    get(); // Check for exceptions
+                                                    System.out.println("Cập nhật số lượng sách " + tenSP + " thành công.");
+                                                } catch (Exception ex) {
+                                                    ex.printStackTrace();
+                                                    view.showErrorMessage("Lỗi khi cập nhật số lượng sách " + tenSP + ": " + ex.getMessage());
+                                                }
+                                            }
+                                        }.execute();
+                                        ctdhs.add(detail);
+                                        // --- END: Added code for book quantity update ---
+                                    }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     view.showErrorMessage("Lỗi khi thêm CTDH: " + e.getMessage());
                                 } finally {
                                     // Khi tất cả CTDH đã xử lý => Xoá bảng
                                     if (completedCount.incrementAndGet() == totalRows) {
+                                        String filePath = "C:/Users/Admin/hoadon.pdf";
+                                        exportInvoiceToPDF(filePath, addedOrder, ctdhs);
                                         view.clearReceiptTable();
                                     }
                                 }
@@ -241,7 +290,78 @@ public void onCheckoutClicked(String tenkh) {
         }
     }.execute();
 }
+public static void exportInvoiceToPDF(String filePath, Order dh, List<OD> ctdhs) {
+        Rectangle pageSize = new Rectangle(298, 420); // A6 in points (1 point = 1/72 inch)
+        Document document = new Document(pageSize, 20, 20, 20, 20); // A6 paper
 
+        try {
+            PdfWriter.getInstance(document, new FileOutputStream(filePath));
+            document.open();
+
+            // ============ TIÊU ĐỀ ============
+            BaseFont bf = BaseFont.createFont("C:/Windows/Fonts/arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            Font font = new Font(bf, 14, Font.BOLD);
+
+            Paragraph title = new Paragraph("HÓA ĐƠN BÁN HÀNG", font);
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+            Font fonthg = new Font(bf, 12);
+            document.add(new Paragraph(" "));
+            document.add(new Paragraph("Mã ĐH: " + dh.getMaDH(),fonthg));
+            document.add(new Paragraph("Ngày: " + dh.getNgayBan(),fonthg));
+            document.add(new Paragraph("Khách: " + (dh.getTenKH() != null ? dh.getTenKH() : "Khách lẻ"),fonthg));
+            document.add(new Paragraph("Nhân viên: " + dh.getTennv(),fonthg));
+
+            document.add(new Paragraph(" "));
+
+            // ============ BẢNG SẢN PHẨM ============
+            PdfPTable table = new PdfPTable(4);
+            table.setWidths(new float[]{3, 1, 2, 2});
+            table.setWidthPercentage(100);
+            table.setSpacingBefore(5f);
+            table.setSpacingAfter(5f);
+
+            table.addCell("SP");
+            table.addCell("SL");
+            table.addCell(new Phrase("Đ. Giá", fonthg));
+            table.addCell(new Phrase("Th. Tiền", fonthg));
+            for (OD ct : ctdhs) {
+                table.addCell(new Phrase(ct.getTenSach(), fonthg));
+                table.addCell(String.valueOf(ct.getSoLuong()));
+                table.addCell(String.format("%,.0f", ct.getDonGia()));
+                table.addCell(String.format("%,.0f", ct.getSoLuong() * ct.getDonGia()));
+            }
+
+            document.add(table);
+
+            // ============ TỔNG TIỀN ============
+            Paragraph total = new Paragraph("Tổng: " + String.format("%,.0f", dh.getTongTien()) + " $",
+                    new Font(bf, 12, Font.BOLD));
+            total.setAlignment(Element.ALIGN_RIGHT);
+            document.add(total);
+
+            // ============ CẢM ƠN ============
+            document.add(new Paragraph(" "));
+            Paragraph thanks = new Paragraph("Cảm ơn quý khách!", new Font(bf, 12));
+            thanks.setAlignment(Element.ALIGN_CENTER);
+            document.add(thanks);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            document.close();
+            try {
+                if (Desktop.isDesktopSupported()) {
+                    Desktop.getDesktop().open(new File(filePath)); // Mở file bằng phần mềm mặc định trên máy
+                } else {
+                    System.out.println("Desktop không được hỗ trợ trên hệ điều hành này.");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("Không thể mở hóa đơn: " + e.getMessage());
+            }
+        }
+    }
 private double parseMoney(String str) {
     return Double.parseDouble(
         str.replace("$", "").replace(",", "").trim()

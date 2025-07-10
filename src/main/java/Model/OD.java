@@ -13,15 +13,27 @@ public class OD {
     private String tenSach;
     private int soLuong;
     private double donGia;
+    private double tongTien;
     private String maDH;
 
-    public OD(int id, String maSP, int soLuong, double donGia, String maDH) {
-        this.id = id;
-        this.tenSach = maSP;
+    public OD(String tenSach, int soLuong, double donGia, double tongtien,String maDH ) {
+        this.tenSach = tenSach;
         this.soLuong = soLuong;
-        this.donGia = donGia;
+        this.donGia = donGia; 
+        this.tongTien = tongtien;
+
         this.maDH = maDH;
     }
+
+    public double getTongTien() {
+        return tongTien;
+    }
+
+    public void setTongTien(double tongTien) {
+        this.tongTien = tongTien;
+    }
+
+   
 
     public OD() {
     }

@@ -4,9 +4,9 @@
  */
 package Presenter;
 
-import API.LoginApiClient;
-import Model.Account;
+import API.AccountApiClient;
 import View.interfaces.ILogin;
+import java.io.IOException;
 import java.util.Map;
 import javax.swing.SwingWorker;
 
@@ -17,9 +17,9 @@ import javax.swing.SwingWorker;
 public class LoginPresenter {
 
     private final ILogin view;
-    private final LoginApiClient api;
+    private final AccountApiClient api;
 
-    public LoginPresenter(ILogin view, LoginApiClient apiC) {
+    public LoginPresenter(ILogin view, AccountApiClient apiC) {
         this.view  = view;
         this.api = apiC;
     }
@@ -38,7 +38,7 @@ public class LoginPresenter {
         new SwingWorker<Map<String, Object>, Void>() {
 
             @Override            // chạy ở thread nền
-            protected Map<String, Object> doInBackground() {
+            protected Map<String, Object> doInBackground() throws IOException {
                 return api.login(user, pass);           // trả Map
             }
 
@@ -53,9 +53,10 @@ public class LoginPresenter {
                         view.showMessage(msg);
                         return;
                     }
- String role = String.valueOf(res.getOrDefault("role", "Nhân viên"));
+                String role = String.valueOf(res.getOrDefault("role", "Nhân viên"));
+                String employeeName = String.valueOf(res.getOrDefault("tennv", ""));
                 boolean isManager = "Quản lí".equalsIgnoreCase(role);
-                    view.navigateToMain(isManager);       // mở UI tương ứng
+                    view.navigateToMain(isManager,employeeName);       // mở UI tương ứng
 
                 } catch (Exception ex) {                  // Interrupted, ExecutionException
                     ex.printStackTrace();

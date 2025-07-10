@@ -62,6 +62,7 @@ public class ODApiClient extends ApiClientBase {
     public OD addOD(OD od) throws IOException {
         // Sử dụng objectMapper đã được kế thừa từ ApiClientBase
         String jsonRequest = objectMapper.writeValueAsString(od);
+        System.out.println("JSON Request being sent: " + jsonRequest); // Add this line
         String jsonResponse = sendPostRequest(ctdh_endPoints, jsonRequest); // Gọi sendPostRequest
         if (jsonResponse != null && !jsonResponse.isEmpty()) {
             try {

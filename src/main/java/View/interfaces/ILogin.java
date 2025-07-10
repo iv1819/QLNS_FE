@@ -12,5 +12,5 @@ public interface ILogin {
     String getUsername();
     String getPassword();
     void showMessage(String msg);
-    void navigateToMain(boolean isManager); 
+    void navigateToMain(boolean isManager, String tennv); 
 }
