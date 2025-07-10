@@ -48,7 +48,7 @@ private boolean isManager;
          this.isManager = isManager;
 
         initComponents(); 
-setLocationRelativeTo(null);
+        setLocationRelativeTo(null);
         tblModelHD = (DefaultTableModel) jtblHD.getModel();
         tblModelHD.setColumnCount(0);
         tblModelHD.addColumn("Tên sách");
@@ -121,31 +121,38 @@ setLocationRelativeTo(null);
     @Override
 public void populateMaterialCategoryTabs(LinkedHashMap<String, ArrayList<Book>> categorizedBooks) {
 
-    // 1. Lưu cache & reset vị trí
-    cachedCategories.clear();
-    cachedCategories.putAll(categorizedBooks);
-    currentCategoryIndex = 0;
-    currentPage = 0;
-
     // 2. Tạo tab cho mỗi danh mục (chỉ chứa JScrollPane rỗng ban đầu)
     jmTabBooks.removeAll();
-    if (cachedCategories.isEmpty()) {
-        jmTabBooks.addTab("Không có Danh mục", new JLabel("Không tìm thấy danh mục hoặc không có sách."));
-        return;
+    jmTabBooks.setPreferredSize(new Dimension(536,461));
+    /* ==== 1. Tab cho sách (như cũ) ==== */
+            for (Map.Entry<String, ArrayList<Book>> e : categorizedBooks.entrySet()) {
+                addBookTab(e.getKey(), e.getValue());
+            }
+}
+private void addBookTab(String title, ArrayList<Book> books) {
+    // This panel will hold the BookItemPanels in a grid
+    JPanel gridPanel = new JPanel(new GridLayout(0, 4, 20, 20));
+
+    if (books.isEmpty()) {
+        gridPanel.add(new JLabel("Không có sách trong danh mục này."));
+    } else {
+        for (Book b : books) {
+            if(b.getSoLuong()<=0){
+                continue;
+            }
+            BookItemPanel p = new BookItemPanel(b, presenter);
+            p.setBookData(b);
+            gridPanel.add(p);
+        }
     }
-    cachedCategories.keySet().forEach(name ->
-        jmTabBooks.addTab(name, new JScrollPane(new JPanel()))  // placeholder
-    );
 
-    // 3. Render trang đầu tiên của danh mục đầu tiên
-    renderCurrentPage();
+    // Create a wrapper panel to contain the gridPanel.
+    // This helps the JScrollPane understand the preferred width.
+    JPanel wrapperPanel = new JPanel(new BorderLayout());
+    wrapperPanel.add(gridPanel, BorderLayout.NORTH); // Add to NORTH to prevent stretching vertically
 
-    // 4. Lắng nghe chọn tab để reset currentPage = 0
-    jmTabBooks.addChangeListener(e -> {
-        currentCategoryIndex = jmTabBooks.getSelectedIndex();
-        currentPage = 0;
-        renderCurrentPage();
-    });
+    // Use the wrapperPanel in the JScrollPane
+    jmTabBooks.addTab(title, new JScrollPane(wrapperPanel));
 }
 private void renderCurrentPage() {
     int tabCount = jmTabBooks.getTabCount();
@@ -370,13 +377,11 @@ private void renderCurrentPage() {
         jMiddle.setLayout(jMiddleLayout);
         jMiddleLayout.setHorizontalGroup(
             jMiddleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jmTabBooks, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jmTabBooks, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jMiddleLayout.setVerticalGroup(
             jMiddleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jMiddleLayout.createSequentialGroup()
-                .addComponent(jmTabBooks, javax.swing.GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jmTabBooks, javax.swing.GroupLayout.DEFAULT_SIZE, 465, Short.MAX_VALUE)
         );
 
         jMiddle3.setBackground(new java.awt.Color(255, 255, 255));
@@ -462,13 +467,13 @@ private void renderCurrentPage() {
                 .addGroup(jBottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jbtnTim)
                     .addComponent(jLabel9))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(jBottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(jtxtTenSachTK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
                     .addComponent(jtxtTenTacGiaTK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(13, 13, 13))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jLeftLayout = new javax.swing.GroupLayout(jLeft);
@@ -488,8 +493,8 @@ private void renderCurrentPage() {
                 .addComponent(jMiddle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jMiddle3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jBottom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jBottom, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jBanner2.setBackground(new java.awt.Color(0, 0, 102));
