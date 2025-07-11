@@ -30,7 +30,7 @@ public class ODPresenter {
         new SwingWorker<List<OD>, Void>() {
             @Override
             protected List<OD> doInBackground() throws Exception {
-                return odApi.searchOds(maDH);
+                return odApi.getODsByMaDH(maDH);
             }
 
             @Override
@@ -68,34 +68,6 @@ public class ODPresenter {
         }.execute();
     }
 
-    public void searchODByMaDH(String maDH) {
-        new SwingWorker<List<OD>, Void>() {
-            @Override
-            protected List<OD> doInBackground() throws Exception {
-                String query = "";
-                if (maDH != null && !maDH.isEmpty()) {
-                    query += maDH;
-                }
-                if (query.isEmpty()) {
-                    return odApi.getAllODs();
-                }
-                return odApi.searchOds(query);
-            }
-
-            @Override
-            protected void done() {
-                try {
-                    List<OD> searchResults = get();
-                    view.displayOD(new ArrayList<>(searchResults));
-                    if (searchResults.isEmpty()) {
-                        view.showMessage("Không tìm thấy ctdh nào phù hợp.");
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    view.showErrorMessage("Lỗi khi tìm kiếm ctdh qua API: " + e.getMessage());
-                }
-            }
-        }.execute();
-    }
+    
 
 }

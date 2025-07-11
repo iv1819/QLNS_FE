@@ -20,4 +20,5 @@ public interface IMainMenu {
     void clearReceiptTable();
     double LayTongTien();
     DefaultTableModel getReceiptTableModel();
+    void updateCustomerNameDisplay(String customerName); 
 }

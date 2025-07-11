@@ -8,6 +8,8 @@ import Model.Author;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -145,4 +147,18 @@ public class AuthorApiClient extends ApiClientBase {
     public List<Author> searchAuthors(String tenTG) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+    public Author getIdByTenTG(String tenTG) throws IOException {
+          String encodedName = URLEncoder.encode(tenTG, StandardCharsets.UTF_8);
+            String jsonResponse = sendGetRequest(TAC_GIA_ENDPOINT + "/findid?tenTG=" + encodedName); // Gọi sendGetRequest
+        if (jsonResponse != null && !jsonResponse.isEmpty()) {
+            try {
+                // Sử dụng objectMapper đã được kế thừa từ ApiClientBase
+                return objectMapper.readValue(jsonResponse, Author.class);
+            } catch (IOException e) {
+                Logger.getLogger(AuthorApiClient.class.getName()).log(Level.SEVERE, "Lỗi phân tích JSON cho Author tên " + tenTG, e);
+                throw e; // Ném lại lỗi để Presenter xử lý
+            }
+        }
+        return null;
+        }
 }

@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package View;
+import Model.Author;
 import Presenter.BookMPresenter; // Import Controller
 import Presenter.MainMenuPresenter;
 import Presenter.MainMenuManagerPresenter;
@@ -29,6 +30,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Objects;
+import javax.swing.JComboBox;
 
 /**
  *
@@ -52,7 +54,8 @@ public class BookM extends javax.swing.JFrame implements IBookM{
         this.mainMenuPresenter = mainMenuPresenter; 
         this.mainMenuManagerPresenter = null;
         initComponents();
-        
+                setLocationRelativeTo(null); 
+
         presenter = new BookMPresenter(this); 
         if (this.mainMenuPresenter != null) {
             presenter.addListener(this.mainMenuPresenter);
@@ -80,6 +83,10 @@ public class BookM extends javax.swing.JFrame implements IBookM{
                 }
             }
         });
+        btnRefresh.addActionListener(e -> {
+            clearForm();
+            presenter.loadAllBooks();// Thêm dòng này để load lại danh sách
+        });
     }
     
    @Override
@@ -95,7 +102,7 @@ public class BookM extends javax.swing.JFrame implements IBookM{
     @Override
     public Integer getSoLuong() {
         try {
-            return Integer.parseInt(jtxtSoLuong.getText());
+            return Integer.valueOf(jtxtSoLuong.getText());
         } catch (NumberFormatException e) {
             return 0; // Hoặc ném ngoại lệ, hoặc trả về null tùy logic validation của bạn
         }
@@ -104,7 +111,7 @@ public class BookM extends javax.swing.JFrame implements IBookM{
     @Override
     public Double getGiaBan() {
         try {
-            return Double.parseDouble(jtxtGia.getText());
+            return Double.valueOf(jtxtGia.getText());
         } catch (NumberFormatException e) {
             return 0.0; // Hoặc ném ngoại lệ, hoặc trả về null
         }
@@ -128,7 +135,7 @@ public class BookM extends javax.swing.JFrame implements IBookM{
     @Override
     public Integer getNamXB() {
         try {
-            return Integer.parseInt(jtxtNamXB.getText());
+            return Integer.valueOf(jtxtNamXB.getText());
         } catch (NumberFormatException e) {
             return 0; // Hoặc ném ngoại lệ, hoặc trả về null
         }
@@ -196,12 +203,12 @@ public class BookM extends javax.swing.JFrame implements IBookM{
     }
 
     @Override
-    public void populateTacGiaNames(List<String> names) {
-        DefaultComboBoxModel<String> tgModel = new DefaultComboBoxModel<>();
-        for (String name : names) {
-            tgModel.addElement(name);
-        }
-        jcbxTacGia.setModel(tgModel);
+    public void populateTacGiaNames(List<String> danhSachTacGia) {
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+    for (String a : danhSachTacGia) {
+        model.addElement(a);
+    }
+        jcbxTacGia.setModel(model);
     }
 
     @Override
@@ -234,9 +241,9 @@ public class BookM extends javax.swing.JFrame implements IBookM{
             row.add(book.getTenSach());
             row.add(book.getSoLuong());
             row.add(book.getGiaBan());
-            row.add(book.getTacGia());
-            row.add(book.getNhaXB());
-            row.add(book.getMaDanhMuc());
+            row.add(book.getTenTacGia());
+            row.add(book.getTenNXB());
+            row.add(book.getTenDanhMuc());
             row.add(book.getNamXB());
             row.add(book.getDuongDanAnh()); // Lưu URL tương đối vào bảng
             dtm.addRow(row);
@@ -251,9 +258,9 @@ public class BookM extends javax.swing.JFrame implements IBookM{
         jtxtGia.setText(String.valueOf(book.getGiaBan()));
 
         // Set ComboBoxes
-        ((DefaultComboBoxModel<String>)jcbxTacGia.getModel()).setSelectedItem(book.getTacGia());
-        ((DefaultComboBoxModel<String>)jcbxNhaXB.getModel()).setSelectedItem(book.getNhaXB());
-        ((DefaultComboBoxModel<String>)jcbxDM.getModel()).setSelectedItem(book.getMaDanhMuc());
+        ((DefaultComboBoxModel<String>)jcbxTacGia.getModel()).setSelectedItem(book.getTenTacGia());
+        ((DefaultComboBoxModel<String>)jcbxNhaXB.getModel()).setSelectedItem(book.getTenNXB());
+        ((DefaultComboBoxModel<String>)jcbxDM.getModel()).setSelectedItem(book.getTenDanhMuc());
         
 
         jtxtNamXB.setText(String.valueOf(book.getNamXB()));
@@ -365,7 +372,7 @@ public void updateImagePreview(String imagePath) {
         jbtnThem = new javax.swing.JButton();
         jbtnSua = new javax.swing.JButton();
         jbtnXoa = new javax.swing.JButton();
-        btnBack = new javax.swing.JButton();
+        btnRefresh = new javax.swing.JButton();
         JMiddle = new javax.swing.JPanel();
         JMaSach = new javax.swing.JLabel();
         JTenSach = new javax.swing.JLabel();
@@ -413,6 +420,7 @@ public void updateImagePreview(String imagePath) {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Quản lí Sách");
 
+        jbtnThem.setBackground(new java.awt.Color(254, 255, 255));
         jbtnThem.setText("Thêm");
         jbtnThem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -420,6 +428,7 @@ public void updateImagePreview(String imagePath) {
             }
         });
 
+        jbtnSua.setBackground(new java.awt.Color(254, 255, 255));
         jbtnSua.setText("Sửa");
         jbtnSua.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -427,6 +436,7 @@ public void updateImagePreview(String imagePath) {
             }
         });
 
+        jbtnXoa.setBackground(new java.awt.Color(254, 255, 255));
         jbtnXoa.setText("Xóa");
         jbtnXoa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -434,7 +444,8 @@ public void updateImagePreview(String imagePath) {
             }
         });
 
-        btnBack.setText("Quay lại");
+        btnRefresh.setBackground(new java.awt.Color(254, 255, 255));
+        btnRefresh.setText("Làm mới");
 
         javax.swing.GroupLayout JUpperLayout = new javax.swing.GroupLayout(JUpper);
         JUpper.setLayout(JUpperLayout);
@@ -442,7 +453,7 @@ public void updateImagePreview(String imagePath) {
             JUpperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, JUpperLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnBack)
+                .addComponent(btnRefresh)
                 .addGap(279, 279, 279))
             .addGroup(JUpperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(JUpperLayout.createSequentialGroup()
@@ -460,7 +471,7 @@ public void updateImagePreview(String imagePath) {
             JUpperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(JUpperLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(btnBack)
+                .addComponent(btnRefresh)
                 .addContainerGap(21, Short.MAX_VALUE))
             .addGroup(JUpperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(JUpperLayout.createSequentialGroup()
@@ -789,7 +800,7 @@ public void updateImagePreview(String imagePath) {
     private javax.swing.JLabel JTacGia;
     private javax.swing.JLabel JTenSach;
     private javax.swing.JPanel JUpper;
-    private javax.swing.JButton btnBack;
+    private javax.swing.JButton btnRefresh;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;

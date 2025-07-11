@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  *
@@ -139,4 +141,8 @@ public class PublisherApiClient extends ApiClientBase {
     public void deletePublisher(String maNXB) throws IOException {
         sendDeleteRequest(NXB_ENDPOINT + "/" + maNXB);
     }
+    public String getIdByTenNXB(String tenNXB) throws IOException {
+            String encodedName = URLEncoder.encode(tenNXB, StandardCharsets.UTF_8);
+            return sendGetRequest(NXB_ENDPOINT + "/findid?tenNXB=" + encodedName); // Không parse JSON
+        }
 }

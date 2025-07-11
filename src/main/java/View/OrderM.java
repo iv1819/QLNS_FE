@@ -33,6 +33,7 @@ public class OrderM extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null); 
         orderPre = new OrderMPresenter(this);
+        odPre = new ODPresenter(this);
 
         jtblOrder.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -217,27 +218,22 @@ private void displaySelectedDH() {
         jLabel2.setText("Mã đơn hàng");
 
         jtxtMaDH.setEditable(false);
-        jtxtMaDH.setText("jTextField1");
 
         jLabel3.setText("Tên KH");
 
         jtxtTenKH.setEditable(false);
-        jtxtTenKH.setText("jTextField2");
 
         jLabel4.setText("Ngày bán");
 
         jtxtNgayBan.setEditable(false);
-        jtxtNgayBan.setText("jTextField3");
 
         jLabel5.setText("Tổng tiền");
 
         jtxtTongTien.setEditable(false);
-        jtxtTongTien.setText("jTextField4");
 
         jLabel6.setText("Tên nhân viên");
 
         jTextField1.setEditable(false);
-        jTextField1.setText("jTextField1");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

@@ -6,10 +6,12 @@ package Presenter;
 
 import API.BookApiClient;
 import API.CategoryApiClient;
+import API.CustomerApiClient;
 import API.ODApiClient;
 import API.OrderApiClient;
 import Model.Book;
 import Model.Category;
+import Model.Customer;
 import Model.OD;
 import Model.Order;
 import View.interfaces.IMainMenu;
@@ -38,60 +40,154 @@ public class MainMenuPresenter implements BookDataChangeListener {
     private CategoryApiClient categoryApiClient;
     private ODApiClient odApiClient;
     private OrderApiClient orderApiClient;
+    private CustomerApiClient cusApiClient;
     // Đối tượng sách đang được chọn trên UI để thêm vào hóa đơn
     private Book currentSelectedBookForReceipt;
-
+private String currentCustomerName = null;
     public MainMenuPresenter(IMainMenu view) {
         this.view = view;
         this.bookApiClient = new BookApiClient();
         this.categoryApiClient = new CategoryApiClient();
         this.odApiClient = new ODApiClient();
         this.orderApiClient = new OrderApiClient();
+                this.cusApiClient = new CustomerApiClient();
+
     }
 
-    public void loadAndDisplayBooksByCategories() {
-        LinkedHashMap<String, ArrayList<Book>> categorizedBooks = new LinkedHashMap<>();
-        try {
-            List<Category> categories = categoryApiClient.getAllCategories();
-            List<Book> allBooks = bookApiClient.getAllBooks();
+   public void loadAndDisplayBooksByCategories() {
+        new SwingWorker<LinkedHashMap<String, ArrayList<Book>>, Void>() {
+            @Override
+            protected LinkedHashMap<String, ArrayList<Book>> doInBackground() throws Exception {
+                LinkedHashMap<String, ArrayList<Book>> categorizedBooks = new LinkedHashMap<>();
 
-            if (categories.isEmpty()) {
-                view.showMessage("Không tìm thấy danh mục nào từ API.");
+                List<Category> categories = categoryApiClient.getAllCategories();
+                List<Book> allBooks = bookApiClient.getAllBooks();
+
+                // Add "Tất cả" category first
+                categorizedBooks.put("Tất cả", new ArrayList<>(allBooks));
+
+                // Populate other categories
+                for (Category category : categories) {
+                    ArrayList<Book> booksInThisCategory = new ArrayList<>();
+                    for (Book book : allBooks) {
+                         if (book.getMaDanhMuc() != null && book.getMaDanhMuc().equals(category.getTenDanhMuc())) {
+                                 booksInThisCategory.add(book);
+                        }
+                    }
+                    categorizedBooks.put(category.getTenDanhMuc(), booksInThisCategory);
+                }
+                return categorizedBooks;
             }
-            categorizedBooks.put("Tất cả", new ArrayList<>(allBooks));
-            for (Category category : categories) {
-                ArrayList<Book> booksInThisCategory = new ArrayList<>();
-                for (Book book : allBooks) {
-                    if (book.getMaDanhMuc() != null && book.getMaDanhMuc().equals(category.getTenDanhMuc())) {
-                        booksInThisCategory.add(book);
+
+            @Override
+            protected void done() {
+                try {
+                    LinkedHashMap<String, ArrayList<Book>> categorizedBooks = get(); // Get result from doInBackground
+                    // Check if categories or books are empty and show message
+                    if (categorizedBooks.isEmpty() || (categorizedBooks.size() == 1 && categorizedBooks.containsKey("Tất cả") && categorizedBooks.get("Tất cả").isEmpty())) {
+                        view.showMessage("Không tìm thấy danh mục hoặc sách nào từ API.");
+                    }
+                    view.populateMaterialCategoryTabs(categorizedBooks);
+                } catch (Exception ex) {
+                    Logger.getLogger(MainMenuPresenter.class.getName()).log(Level.SEVERE, null, ex);
+                    view.showErrorMessage("Lỗi khi tải dữ liệu từ API: " + ex.getMessage() + "\nĐảm bảo backend đang chạy và BASE_URL đúng.");
+                }
+            }
+        }.execute(); // Start the SwingWorker
+    }
+
+    // Changed return type to void as it's now asynchronous
+    public void onCustomerSelected(String sel) {
+        // Clear current customer name immediately to show a 'loading' or 'no selection' state
+        currentCustomerName = null;
+        view.updateCustomerNameDisplay(null); // Update UI to reflect no customer selected yet
+
+        if (sel == null || sel.trim().isEmpty()) {
+            System.out.println("DEBUG (onCustomerSelected): Input selection is empty or null.");
+            recalcTotal(); // Recalculate total as no customer is selected
+            return;
+        }
+
+        String trimmedSel = sel.trim();
+
+        new SwingWorker<String, Void>() { // SwingWorker to perform search in background
+            @Override
+            protected String doInBackground() throws Exception {
+                List<Customer> cus = cusApiClient.search(trimmedSel); // Perform the API call
+                if (cus != null && !cus.isEmpty()) {
+                    return cus.getFirst().getTenKh(); // Return the found customer name
+                }
+                return null; // No customer found
+            }
+
+            @Override
+            protected void done() { // This method runs on the EDT
+                try {
+                    String foundCustomerName = get(); // Get the result from doInBackground
+                    currentCustomerName = foundCustomerName; // Update the presenter's state
+                    view.updateCustomerNameDisplay(currentCustomerName); // Update the UI
+                    System.out.println("DEBUG (onCustomerSelected.done): Customer search result: " + (currentCustomerName != null ? currentCustomerName : "No customer found"));
+                } catch (Exception ex) {
+                    Logger.getLogger(MainMenuPresenter.class.getName()).log(Level.SEVERE, null, ex);
+                    view.showErrorMessage("Lỗi khi tìm khách hàng: " + ex.getMessage());
+                    currentCustomerName = null; // Ensure null on error
+                    view.updateCustomerNameDisplay(null); // Clear display on error
+                } finally {
+                    // Always recalculate total after customer selection process, regardless of success or failure.
+                    recalcTotal();
+                }
+            }
+        }.execute(); // Start the SwingWorker
+    }
+          public void searchSP(String tenSP) {
+        if (tenSP == null || tenSP.trim().isEmpty()) {
+            loadAndDisplayBooksByCategories(); 
+            return;
+        }
+        new SwingWorker<LinkedHashMap<String, ArrayList<Book>>, Void>() {
+            private boolean noResultsFound = false;
+
+            @Override
+            protected LinkedHashMap<String, ArrayList<Book>> doInBackground() throws Exception {
+                LinkedHashMap<String, ArrayList<Book>> booksByCat = new LinkedHashMap<>();
+
+                List<Category> categories = categoryApiClient.getAllCategories();
+                for (Category dm : categories) {
+                    List<Book> booksInThisCategoryFromApi = bookApiClient.getBooksByCategoryId(dm.getMaDanhMuc());
+
+                    ArrayList<Book> filteredBooksInThisCategory = new ArrayList<>();
+                    for (Book book : booksInThisCategoryFromApi) {
+                        if (book.getTenSach() != null && book.getTenSach().toLowerCase().contains(tenSP.toLowerCase())) {
+                            filteredBooksInThisCategory.add(book);
+                        }
+                    }
+                    if (!filteredBooksInThisCategory.isEmpty()) {
+                        booksByCat.put(dm.getTenDanhMuc(), filteredBooksInThisCategory);
                     }
                 }
-                categorizedBooks.put(category.getTenDanhMuc(), booksInThisCategory);
+
+                noResultsFound = booksByCat.isEmpty() || booksByCat.values().stream().allMatch(List::isEmpty);
+
+                return booksByCat;
             }
-            view.populateMaterialCategoryTabs(categorizedBooks);
 
-        } catch (IOException ex) {
-            Logger.getLogger(MainMenuPresenter.class.getName()).log(Level.SEVERE, null, ex);
-            view.showErrorMessage("Lỗi khi tải dữ liệu từ API: " + ex.getMessage() + "\nĐảm bảo backend đang chạy và BASE_URL đúng.");
-        }
+            @Override
+            protected void done() {
+               
+                try {
+                    LinkedHashMap<String, ArrayList<Book>> categorizedBooks = get();
+                    view.populateMaterialCategoryTabs(categorizedBooks); 
+                    if (noResultsFound) {
+                        view.showMessage("Không tìm thấy sản phẩm nào phù hợp với từ khóa '" + tenSP + "'.");
+                    }
+                } catch (Exception ex) {
+                    // Xử lý lỗi nếu có trong quá trình tải dữ liệu
+                    Logger.getLogger(MainMenuPresenter.class.getName()).log(Level.SEVERE, null, ex);
+                    view.showErrorMessage("Lỗi khi tìm kiếm sách: " + ex.getMessage() + "\nĐảm bảo backend đang chạy và BASE_URL đúng.");
+                }
+            }
+        }.execute(); // Bắt đầu chạy SwingWorker
     }
-    /* Giữ trạng thái */
-    private String currentCustomerName = null;
-
-   public String onCustomerSelected(String sel) {
-    currentCustomerName = null;
-    // Check if sel is null, empty, or not a number (only digits)
-    if(sel == null|| sel.trim().isEmpty() ||!sel.matches("\\d+")){
-        System.out.println("trong " + currentCustomerName);
-    }
-    else{
-        //String tenKH = cusConnect.timKhachHangSDT(sel.trim());
-        //currentCustomerName = tenKH;
-    }
-    
-    recalcTotal(); // Tính lại tổng ngay
-    return currentCustomerName; // Return the customer name or null
-}
 
     /* Bất cứ khi nào bảng hóa đơn thay đổi, gọi hàm này */
     private void recalcTotal() {
@@ -215,6 +311,7 @@ public void onCheckoutClicked(String tenkh, String tennv) {
                         detail.setSoLuong((Integer) model.getValueAt(row, 1));
                         detail.setDonGia(parseMoney(model.getValueAt(row, 2).toString()));
                         detail.setTongTien(parseMoney(model.getValueAt(row, 3).toString()));
+                        
 
                         new SwingWorker<OD, Void>() {
                             @Override

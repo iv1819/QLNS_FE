@@ -4,6 +4,7 @@
  */
 package View.interfaces;
 
+import Model.Author;
 import Model.Book;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +23,7 @@ public interface IBookM {
 
     void populateNhaXBNames(List<String> names);
 
-    void populateTacGiaNames(List<String> names);
-
+ void populateTacGiaNames(List<String> danhSachTacGia);
     void populateDanhMucNames(List<String> names);
 
     void showMessage(String message);

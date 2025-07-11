@@ -43,7 +43,21 @@ public class ODApiClient extends ApiClientBase {
         }
         return Collections.emptyList();
     }
-    
+     public List<OD> getODsByMaDH(String query) throws IOException {
+                 String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8.toString());
+
+        String jsonResponse = sendGetRequest(ctdh_endPoints+ "/byMaDH/" + encodedQuery); // Gọi sendGetRequest từ ApiClientBase
+        if (jsonResponse != null && !jsonResponse.isEmpty()) {
+            try {
+                // Sử dụng objectMapper đã được kế thừa từ ApiClientBase
+                return objectMapper.readValue(jsonResponse, new TypeReference<List<OD>>() {});
+            } catch (IOException e) {
+                Logger.getLogger(ODApiClient.class.getName()).log(Level.SEVERE, "Lỗi phân tích JSON cho Ods", e);
+                throw e; // Ném lại lỗi để Presenter xử lý
+            }
+        }
+        return Collections.emptyList();
+    }
 
     public OD getODbyID(int id) throws IOException {
         String jsonResponse = sendGetRequest(ctdh_endPoints + "/" + id); // Gọi sendGetRequest

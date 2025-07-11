@@ -105,10 +105,10 @@ BookM.setApiBaseUrlForImages("http://localhost:8080");
                         view.setTenSach(selectedBook.getTenSach());
                         view.setSoLuong(selectedBook.getSoLuong());
                         view.setGiaBan(selectedBook.getGiaBan());
-                        view.setTacGia(selectedBook.getTacGia());
-                        view.setNhaXB(selectedBook.getNhaXB());
+                        view.setTacGia(selectedBook.getTenTacGia());
+                        view.setNhaXB(selectedBook.getTenNXB());
                         view.setNamXB(selectedBook.getNamXB());
-                        view.setMaDanhMuc(selectedBook.getMaDanhMuc());
+                        view.setMaDanhMuc(selectedBook.getTenDanhMuc());
 
                         // Cập nhật đường dẫn ảnh và hiển thị ảnh
                         String imageUrl = selectedBook.getDuongDanAnh();
@@ -229,78 +229,113 @@ BookM.setApiBaseUrlForImages("http://localhost:8080");
      * Xử lý logic thêm sách.
      * @param book Đối tượng Book cần thêm.
      */
-    public void addBook() {
-        // Đảm bảo book.getDuongDanAnh() chứa uploadedImageUrl
-         // Lấy dữ liệu từ View và tạo BookDto
-        Book bookDto = new Book();
+   public void addBook() {
+        // Step 1: Collect direct data from the View outside the SwingWorker
+        // These calls are fast and safe on the EDT.
+        Book bookDto = new Book(); // Use the DTO from the backend model package
         bookDto.setTenSach(view.getTenSach());
         bookDto.setSoLuong(view.getSoLuong());
         bookDto.setGiaBan(view.getGiaBan());
-        bookDto.setTacGia(view.getTacGia());
-        bookDto.setNhaXB(view.getNhaXB());
-        // Sử dụng currentUploadedImageUrl (đã được cập nhật sau khi upload ảnh)
-        bookDto.setDuongDanAnh(currentUploadedImageUrl); 
+        bookDto.setDuongDanAnh(currentUploadedImageUrl);
         bookDto.setNamXB(view.getNamXB());
-        bookDto.setMaDanhMuc(view.getMaDanhMuc());
 
+        final String selectedAuthorName = view.getTacGia();
+        final String selectedPublisherName = view.getNhaXB();
+        final String selectedCategoryName = view.getMaDanhMuc(); 
         new SwingWorker<Book, Void>() {
             @Override
             protected Book doInBackground() throws Exception {
-                return bookApiClient.addBook(bookDto);
+                try {
+                  
+                    String authorId = authorApi.getIdByTenTG(selectedAuthorName).getMaTG();
+                    String publisherId = pubApi.getIdByTenNXB(selectedPublisherName);
+                    String categoryId = categoryApiClient.getIdByTenDanhMuc(selectedCategoryName);
+
+                    bookDto.setMaTacGia(authorId);
+                    bookDto.setTenTacGia(selectedAuthorName); 
+                    bookDto.setMaNXB(publisherId);
+                    bookDto.setTenNXB(selectedPublisherName); 
+                    bookDto.setMaDanhMuc(categoryId);
+
+                
+                    return bookApiClient.addBook(bookDto);
+                } catch (IOException e) {
+                   
+                    throw new RuntimeException("Lỗi khi thực hiện yêu cầu API trong nền: " + e.getMessage(), e);
+                }
             }
 
             @Override
             protected void done() {
+                
                 try {
-                    Book addedBook = get();
+                    Book addedBook = get(); 
                     if (addedBook != null) {
                         view.showMessage("Thêm sách thành công!");
-                        loadAllBooks(); // Tải lại danh sách sách trong BookM
-                        notifyListeners(); // Thông báo cho MainMenuPresenter
-                        view.clearForm(); // Xóa trắng input
+                       
+                        loadAllBooks(); 
+                        notifyListeners(); 
+                        view.clearForm();
                     } else {
                         view.showErrorMessage("Thêm sách thất bại.");
                     }
                 } catch (Exception e) {
+                    
                     e.printStackTrace();
-                    view.showErrorMessage("Lỗi khi thêm sách qua API: " + e.getMessage());
+                    view.showErrorMessage("Lỗi khi thêm sách: " + e.getMessage());
                 }
             }
-        }.execute();
+        }.execute(); // Execute the SwingWorker
     }
 
     /**
      * Xử lý logic cập nhật sách.
      * @param book Đối tượng Book cần cập nhật.
      */
-    public void updateBook() {
-        String maSach = view.getMaSach(); // Lấy mã sách từ View
+      public void updateBook() {
+       
+        final String maSach = view.getMaSach();
         if (maSach == null || maSach.trim().isEmpty()) {
             view.showErrorMessage("Vui lòng chọn sách cần cập nhật.");
             return;
         }
-         // Lấy dữ liệu từ View và tạo BookDto
-        Book bookDto = new Book();
-        bookDto.setMaSach(maSach); // Đảm bảo ID được truyền vào DTO
+
+        final Book bookDto = new Book(); 
+        bookDto.setMaSach(maSach);
         bookDto.setTenSach(view.getTenSach());
         bookDto.setSoLuong(view.getSoLuong());
         bookDto.setGiaBan(view.getGiaBan());
-        bookDto.setTacGia(view.getTacGia());
-        bookDto.setNhaXB(view.getNhaXB());
         bookDto.setNamXB(view.getNamXB());
-        bookDto.setMaDanhMuc(view.getMaDanhMuc());
-        // Nếu có ảnh mới được upload, cập nhật đường dẫn ảnh
-        if (!currentUploadedImageUrl.isEmpty()) {
+
+        if (currentUploadedImageUrl != null && !currentUploadedImageUrl.isEmpty()) {
             bookDto.setDuongDanAnh(currentUploadedImageUrl);
-        }
-        else {
+        } else {
             bookDto.setDuongDanAnh(view.getDuongDanAnh()); 
         }
 
-        new SwingWorker<Book, Void>() {
+        final String selectedAuthorName = view.getTacGia();
+        final String selectedPublisherName = view.getNhaXB();
+        final String selectedCategoryName = view.getMaDanhMuc(); 
+        new SwingWorker<Book, Void>() { 
             @Override
             protected Book doInBackground() throws Exception {
-                return bookApiClient.updateBook(maSach, bookDto);
+                try {
+                   
+                    String authorId = authorApi.getIdByTenTG(selectedAuthorName).getMaTG();
+                    String publisherId = pubApi.getIdByTenNXB(selectedPublisherName);
+                    String categoryId = categoryApiClient.getIdByTenDanhMuc(selectedCategoryName);
+
+                   
+                    bookDto.setMaTacGia(authorId);
+                    bookDto.setTenTacGia(selectedAuthorName); 
+                    bookDto.setMaNXB(publisherId);
+                    bookDto.setTenNXB(selectedPublisherName); 
+                    bookDto.setMaDanhMuc(categoryId); 
+                    return bookApiClient.updateBook(maSach, bookDto);
+                } catch (IOException e) {
+                  
+                    throw new RuntimeException("Lỗi khi thực hiện yêu cầu API cập nhật sách trong nền: " + e.getMessage(), e);
+                }
             }
 
             @Override
@@ -309,19 +344,19 @@ BookM.setApiBaseUrlForImages("http://localhost:8080");
                     Book updatedBook = get();
                     if (updatedBook != null) {
                         view.showMessage("Cập nhật sách thành công!");
-                        loadAllBooks();
+                        loadAllBooks(); 
                         notifyListeners();
-                        view.clearForm();
-                        currentUploadedImageUrl = null;
+                        view.clearForm(); 
+                        currentUploadedImageUrl = null; 
                     } else {
                         view.showErrorMessage("Cập nhật sách thất bại.");
                     }
-                } catch (Exception e) {
+                } catch (Exception e) { 
                     e.printStackTrace();
-                    view.showErrorMessage("Lỗi khi cập nhật sách qua API: " + e.getMessage());
+                    view.showErrorMessage("Lỗi khi cập nhật sách: " + e.getMessage());
                 }
             }
-        }.execute();
+        }.execute(); // Thực thi SwingWorker
     }
 
     /**

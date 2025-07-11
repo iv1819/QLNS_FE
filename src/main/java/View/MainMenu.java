@@ -88,18 +88,34 @@ private boolean isManager;
                           : sel.trim();
 
             // 3) Gọi Controller
-            presenter.onCheckoutClicked(tenKH, tenNV);
+            presenter.onCheckoutClicked(tenKH, jtxtTenNV.getText().trim());
         });
         jbtnDX.addActionListener(e -> {
             Login lg = new Login();
                 lg.setVisible(true);
                 this.dispose();
         });
+        jbtnPreviousPage.addActionListener(e -> {
+               currentPage--;
+            renderCurrentPage();
+        });
+        jbtnNextPage.addActionListener(e -> {
+               currentPage++;
+            renderCurrentPage();
+        });
+        jbtnTim.addActionListener(e ->{
+         presenter.searchSP(jtxtTenSachTK.getText().trim());
+    });
+         jmTabBooks.addChangeListener(e -> {
+        currentCategoryIndex = jmTabBooks.getSelectedIndex();
+        currentPage = 0;
+        renderCurrentPage();
+    });
         jTotalPd.setText("0"); // Giá trị ban đầu
 
         presenter.loadAndDisplayBooksByCategories(); // Yêu cầu Presenter tải dữ liệu
         jbtnTimKH.addActionListener(e -> {
-            jtxtTenKH.setText(presenter.onCustomerSelected(jtxtTenKH.getText()));
+            presenter.onCustomerSelected(jtxtTenKH.getText());
         });
         addWindowListener(new WindowAdapter() {
             @Override
@@ -113,7 +129,11 @@ private boolean isManager;
     public DefaultTableModel getReceiptTableModel() {
     return tblModelHD;
 }
-    
+     @Override
+    public void updateCustomerNameDisplay(String customerName) {
+        // Assuming jtxtTenKH is the JTextField where the customer name is displayed
+        jtxtTenKH.setText(customerName != null ? customerName : "");
+    }
     @Override
     public double LayTongTien(){
         return Double.parseDouble(jtxtTongTienHD.getText().replace("$", "").replace(",", "").trim());
@@ -121,6 +141,11 @@ private boolean isManager;
     @Override
 public void populateMaterialCategoryTabs(LinkedHashMap<String, ArrayList<Book>> categorizedBooks) {
 
+// 1. Lưu cache & reset vị trí
+    cachedCategories.clear();
+    cachedCategories.putAll(categorizedBooks);
+    currentCategoryIndex = 0;
+    currentPage = 0;
     // 2. Tạo tab cho mỗi danh mục (chỉ chứa JScrollPane rỗng ban đầu)
     jmTabBooks.removeAll();
     jmTabBooks.setPreferredSize(new Dimension(536,461));
@@ -128,10 +153,13 @@ public void populateMaterialCategoryTabs(LinkedHashMap<String, ArrayList<Book>> 
             for (Map.Entry<String, ArrayList<Book>> e : categorizedBooks.entrySet()) {
                 addBookTab(e.getKey(), e.getValue());
             }
+            renderCurrentPage();
+           
 }
 private void addBookTab(String title, ArrayList<Book> books) {
     // This panel will hold the BookItemPanels in a grid
     JPanel gridPanel = new JPanel(new GridLayout(0, 4, 20, 20));
+    gridPanel.setBorder(new EmptyBorder(5, 20, 5, 20));
 
     if (books.isEmpty()) {
         gridPanel.add(new JLabel("Không có sách trong danh mục này."));
@@ -173,20 +201,31 @@ private void renderCurrentPage() {
     int end   = Math.min(start + BOOKS_PER_PAGE, books.size());
     List<Book> pageBooks = books.subList(start, end);
 
-    // Tạo panel trang
+    // Tạo panel chứa các sách trên trang hiện tại với GridLayout
     JPanel gridPanel = new JPanel(new GridLayout(0, 4, 20, 20));
+    gridPanel.setBorder(new EmptyBorder(5, 20, 5, 20)); // Apply border consistently
+
     if (pageBooks.isEmpty()) {
         gridPanel.add(new JLabel("Không có sách trong danh mục này."));
     } else {
         for (Book book : pageBooks) {
-            gridPanel.add(new BookItemPanel(book, presenter));
+            if(book.getSoLuong() <= 0) { // Check quantity consistently
+                continue;
+            }
+            BookItemPanel p = new BookItemPanel(book, presenter);
+            p.setBookData(book);
+            gridPanel.add(p);
         }
     }
+
+    // *** Thêm một wrapper panel với BorderLayout.NORTH để ngăn giãn dọc ***
+    JPanel wrapperPanelForPage = new JPanel(new BorderLayout());
+    wrapperPanelForPage.add(gridPanel, BorderLayout.NORTH);
 
     // Cập nhật JScrollPane của tab
     Component comp = jmTabBooks.getComponentAt(currentCategoryIndex);
     if (comp instanceof JScrollPane scroll) {
-        scroll.setViewportView(gridPanel);
+        scroll.setViewportView(wrapperPanelForPage); // Set the wrapper panel as the new view
     }
 
     // Cập nhật label/nút trang
@@ -230,6 +269,10 @@ private void renderCurrentPage() {
             jtxtGG.setText("10%");
             totalAmount *= 0.9;                           // ‑10 %
         }
+        else{
+           jtxtGG.setText("0%");
+
+        }
 
         jtxtTongTienHD.setText(String.format("%.0f $", totalAmount));
         jTotalPd.setText(String.valueOf(totalItems));
@@ -256,11 +299,8 @@ private void renderCurrentPage() {
     // Nếu muốn vô hiệu hoá nút “Thêm” sau khi xoá
     updateSelectedBook(null);
 }
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+    
+ 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -284,8 +324,6 @@ private void renderCurrentPage() {
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jtxtTenSachTK = new javax.swing.JTextField();
-        jLabel10 = new javax.swing.JLabel();
-        jtxtTenTacGiaTK = new javax.swing.JTextField();
         jbtnTim = new javax.swing.JButton();
         jRight = new javax.swing.JPanel();
         jBanner2 = new javax.swing.JPanel();
@@ -431,9 +469,7 @@ private void renderCurrentPage() {
 
         jLabel8.setText("Tên sách:");
 
-        jLabel9.setText("Tìm theo tên sách và tác giả");
-
-        jLabel10.setText("Tên tác giả:");
+        jLabel9.setText("Tìm theo tên sách");
 
         jbtnTim.setBackground(new java.awt.Color(204, 204, 204));
         jbtnTim.setText("Tìm");
@@ -443,36 +479,28 @@ private void renderCurrentPage() {
         jBottomLayout.setHorizontalGroup(
             jBottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jBottomLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jBottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jBottomLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(113, 113, 113)
-                        .addComponent(jbtnTim))
-                    .addGroup(jBottomLayout.createSequentialGroup()
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jtxtTenSachTK)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel10)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jtxtTenTacGiaTK, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(193, Short.MAX_VALUE)
+                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(191, 191, 191))
+            .addGroup(jBottomLayout.createSequentialGroup()
+                .addGap(70, 70, 70)
+                .addComponent(jLabel8)
+                .addGap(37, 37, 37)
+                .addComponent(jtxtTenSachTK, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
+                .addGap(94, 94, 94)
+                .addComponent(jbtnTim)
                 .addContainerGap())
         );
         jBottomLayout.setVerticalGroup(
             jBottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jBottomLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jBottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jbtnTim)
-                    .addComponent(jLabel9))
-                .addGap(18, 18, 18)
+                .addGap(13, 13, 13)
+                .addComponent(jLabel9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jBottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(jtxtTenSachTK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10)
-                    .addComponent(jtxtTenTacGiaTK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jbtnTim))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -718,15 +746,11 @@ private void renderCurrentPage() {
     }//GEN-LAST:event_jbtnThemHDActionPerformed
 
     private void jbtnPreviousPageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnPreviousPageActionPerformed
-        // TODO add your handling code here:
-          currentPage--;
-    renderCurrentPage();
+
     }//GEN-LAST:event_jbtnPreviousPageActionPerformed
 
     private void jbtnNextPageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnNextPageActionPerformed
-        // TODO add your handling code here:
-        currentPage++;
-    renderCurrentPage();
+
     }//GEN-LAST:event_jbtnNextPageActionPerformed
 
     /**
@@ -769,7 +793,6 @@ private void renderCurrentPage() {
     private javax.swing.JPanel jBanner2;
     private javax.swing.JPanel jBottom;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -805,7 +828,6 @@ private void renderCurrentPage() {
     private javax.swing.JTextField jtxtTenNV;
     private javax.swing.JTextField jtxtTenSachHD;
     private javax.swing.JTextField jtxtTenSachTK;
-    private javax.swing.JTextField jtxtTenTacGiaTK;
     private javax.swing.JLabel jtxtTongTienHD;
     // End of variables declaration//GEN-END:variables
 }
