@@ -141,4 +141,8 @@ public class AuthorApiClient extends ApiClientBase {
     public void deleteAuthor(String maTG) throws IOException {
         sendDeleteRequest(TAC_GIA_ENDPOINT + "/" + maTG); // Gọi sendDeleteRequest
     }
+
+    public List<Author> searchAuthors(String tenTG) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

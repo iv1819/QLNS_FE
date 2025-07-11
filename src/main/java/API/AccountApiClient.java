@@ -96,4 +96,12 @@ public class AccountApiClient extends ApiClientBase {
     public void deleteAccount(String taiKhoan) throws IOException {
         sendDeleteRequest(ACCOUNTS_API_PATH + "/" + taiKhoan);
     }
+
+    public Account addAccount(Account acc) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public List<Account> searchAccounts(String keyword) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

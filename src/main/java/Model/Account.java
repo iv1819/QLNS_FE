@@ -54,7 +54,7 @@ public class Account {
         this.tennv = tennv;
     }
 
-    public Account(String taiKhoan, String matKhau, String chucVu, String trangThai, String tennv) {
+    public Account(String taiKhoan, String matKhau, String chucVu, String trangThai) {
         this.taiKhoan = taiKhoan;
         this.matKhau = matKhau;
         this.chucVu = chucVu;
