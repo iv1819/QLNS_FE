@@ -14,9 +14,9 @@ import API.PublisherApiClient;
  */
 public class PublisherP {
     private Model.Publisher publisherModel;
-    private View.Publisher publisherView;
+    private View.Publisher2 publisherView;
     private PublisherApiClient publisherApiClient;
-    public PublisherP(View.Publisher publisherView) {
+    public PublisherP(View.Publisher2 publisherView) {
         this.publisherView = publisherView;
         this.publisherModel = new Model.Publisher();
         this.publisherApiClient = new PublisherApiClient();
@@ -37,10 +37,10 @@ public class PublisherP {
             newPublisher.setTenNXB(tenNXB);
             newPublisher.setSdt(sdt);
             publisherApiClient.addPublisher(newPublisher);
-            publisherView.showSuccess("Publisher added successfully.");
+            publisherView.showSuccess("Thêm Thành công");
             loadAllPublishers();
         } catch (Exception e) {
-            publisherView.showError("Failed to add publisher: " + e.getMessage());
+            publisherView.showError("thất bại: " + e.getMessage());
         }
     }
     public void updatePublisher(String maNXB, String tenNXB, String sdt) {
@@ -51,19 +51,19 @@ public class PublisherP {
             updatedPublisher.setTenNXB(tenNXB);
             updatedPublisher.setSdt(sdt);
             publisherApiClient.updatePublisher(maNXB, updatedPublisher);
-            publisherView.showSuccess("Publisher updated successfully.");
+            publisherView.showSuccess("Sửa thành công.");
             loadAllPublishers();
         } catch (Exception e) {
-            publisherView.showError("Failed to update publisher: " + e.getMessage());
+            publisherView.showError("Thất bại " + e.getMessage());
         }
     }
     public void deletePublisher(String maNXB) {
         try {
             publisherApiClient.deletePublisher(maNXB);
-            publisherView.showSuccess("Publisher deleted successfully.");
+            publisherView.showSuccess("Xóa Thành Công");
             loadAllPublishers();
         } catch (Exception e) {
-            publisherView.showError("Failed to delete publisher: " + e.getMessage());
+            publisherView.showError("Thất bại " + e.getMessage());
         }
     }
     
