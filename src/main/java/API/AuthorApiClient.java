@@ -8,6 +8,9 @@ import Model.Author;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -142,7 +145,12 @@ public class AuthorApiClient extends ApiClientBase {
         sendDeleteRequest(TAC_GIA_ENDPOINT + "/" + maTG); // Gọi sendDeleteRequest
     }
 
-    public List<Author> searchAuthors(String tenTG) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public List<Author> searchAuthors(String keyword) throws IOException {
+        String path = "/authors/search?keyword=" + URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+        String json = sendGetRequest(path);
+        ObjectMapper mapper = new ObjectMapper();
+        return Arrays.asList(mapper.readValue(json, Author[].class)); // dùng json thay vì response
     }
+
+
 }

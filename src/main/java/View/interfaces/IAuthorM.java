@@ -1,31 +1,22 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package View.interfaces;
 
 import Model.Author;
 import java.util.ArrayList;
 
-/**
- *
- * @author trang
- */
 public interface IAuthorM {
 
-    public void showErrorMessage(String string);
+    void showErrorMessage(String message);
 
-    public void displayAuthors(ArrayList<Author> arrayList);
+    void displayAuthors(ArrayList<Author> authors);
 
-    public String getMaTG();
+    String getMaTG();
 
-    public String getTenTG();
+    String getTenTG();
 
-    public void showMessage(String thêm_tác_giả_thành_công);
+    void showMessage(String message);
 
-    public void clearForm();
+    void clearForm();
 
-    void setMaTG();
-
-    void setTenTG();
+    void setMaTG(String maTG);   // ✔ Chuẩn
+    void setTenTG(String tenTG); // ✔ Chuẩn
 }

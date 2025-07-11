@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Account {
-       private String taiKhoan;
+    private String taiKhoan;
     private String matKhau;
     private String chucVu; 
     private String trangThai; 

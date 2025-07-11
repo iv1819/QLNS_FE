@@ -14,6 +14,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,9 +137,13 @@ public class AccountApiClient extends ApiClientBase {
     }
 
 
-    public List<Account> searchAccounts(String keyword) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public List<Account> searchAccounts(String keyword) throws IOException {
+        String path = "/accounts/search?keyword=" + URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+        String json = sendGetRequest(path);
+        ObjectMapper mapper = new ObjectMapper();
+        return Arrays.asList(mapper.readValue(json, Account[].class));
     }
+
 
     public boolean tonTaiTaiKhoan(String taiKhoan) {
         try {
