@@ -13,10 +13,6 @@ import java.util.ArrayList;
  */
 public interface IAuthorM {
 
-    void setMaTG();
-
-    void setTenTG();
-
     public void showErrorMessage(String string);
 
     public void displayAuthors(ArrayList<Author> arrayList);
@@ -29,4 +25,7 @@ public interface IAuthorM {
 
     public void clearForm();
 
+    void setMaTG();
+
+    void setTenTG();
 }

@@ -27,10 +27,10 @@ public class AccountM extends javax.swing.JFrame implements IAccountM {
     /**
      * Creates new form AccountM
      */
-    
+
     public AccountM() {
         initComponents();
-        setLocationRelativeTo(null); 
+        setLocationRelativeTo(null);
         txtTK.setEditable(false);
         txtMK.setEditable(false);
         accountPresenter = new AccountMPresenter(this);
@@ -46,7 +46,6 @@ public class AccountM extends javax.swing.JFrame implements IAccountM {
         accountPresenter.loadAllAccounts();
     }
 
-    
     private void displaySelectedAccountInfo() {
         int selectedRow = jTable_Account.getSelectedRow();
             if (selectedRow >= 0){
@@ -57,33 +56,33 @@ public class AccountM extends javax.swing.JFrame implements IAccountM {
                 txtMK.setEditable(true);
                 jcbxMCV.setSelectedItem(model.getValueAt(selectedRow, 2).toString());
                 jcbxTT.setSelectedItem(model.getValueAt(selectedRow, 3).toString());
-       
+
                 Object tenNVObj = model.getValueAt(selectedRow, 4);
                 if (tenNVObj != null && !tenNVObj.toString().isEmpty()) {
                     txtTenNV.setText(tenNVObj.toString());
                 } else {
                     txtTenNV.setText(""); // xóa giá trị cũ nếu null/rỗng
                 }
-        
-            
+
+
             }
     }
-    
+
     public void showMessage(String message) {
         JOptionPane.showMessageDialog(this, message);
     }
 
     public void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
-    }  
-    
+    }
+
     private void clearInputFields() {
         txtTK.setText("");
         txtMK.setText("");
         jcbxMCV.setSelectedItem("");
         jcbxTT.setSelectedItem("");
         txtTenNV.setText("");
-        
+
     }
 
     /**
@@ -307,11 +306,11 @@ public class AccountM extends javax.swing.JFrame implements IAccountM {
 
             String tenCV = jcbxMCV.getSelectedItem().toString();
 
-            String trangThai = jcbxTT.getSelectedItem().toString();                
+            String trangThai = jcbxTT.getSelectedItem().toString();
 
             Account updateAccount = new Account(taiKhoan, matKhau, tenCV, trangThai);
             accountPresenter.updateAccount(updateAccount);
-            
+
             clearInputFields();
         }
     } catch (Exception e) {
@@ -326,8 +325,8 @@ public class AccountM extends javax.swing.JFrame implements IAccountM {
             showErrorMessage("Vui lòng chọn tài khoản cần xóa.");
             return;
         }
-        int confirm = JOptionPane.showConfirmDialog(this, 
-        "Bạn có chắc muốn xóa tác giả này?", 
+        int confirm = JOptionPane.showConfirmDialog(this,
+        "Bạn có chắc muốn xóa tác giả này?",
         "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_NO_OPTION) {
                 accountPresenter.deleteAccount(taiKhoan);
@@ -373,7 +372,7 @@ public class AccountM extends javax.swing.JFrame implements IAccountM {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -517,4 +516,5 @@ public class AccountM extends javax.swing.JFrame implements IAccountM {
             setTennv(acc.getTennv());
         }
     }
+
 }

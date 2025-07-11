@@ -6,6 +6,7 @@ package Presenter;
 
 import API.AccountApiClient;
 import Model.Account;
+import Model.AccountDto;
 import View.interfaces.IAccountM;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,20 +65,28 @@ public class AccountMPresenter {
         acc.setChucVu(view.getChucVu());
         acc.setTrangThai(view.getTrangThai());
 
-        new SwingWorker<Account, Void>() {
+        // Gọi API trả về AccountDto
+        AccountDto dto = new AccountDto();
+        dto.setTaiKhoan(acc.getTaiKhoan());
+        dto.setMatKhau(acc.getMatKhau());
+        dto.setTennv(acc.getTennv());
+        dto.setChucVu(acc.getChucVu());
+        dto.setTrangThai(acc.getTrangThai());
+        dto.setConfirmPassword(acc.getMatKhau()); // Truyền thêm confirmPassword nếu cần validate
+
+        new SwingWorker<AccountDto, Void>() {
             @Override
-            protected Account doInBackground() throws Exception {
-                return accountApiClient.addAccount(acc);
+            protected AccountDto doInBackground() throws Exception {
+                return accountApiClient.addAccount(dto);
             }
 
             @Override
             protected void done() {
                 try {
-                    Account addedAcc = get();
+                    AccountDto addedAcc = get();
                     if (addedAcc != null) {
                         view.showMessage("✅ Thêm tài khoản thành công!");
                         loadAllAccounts();
-                        notifyListeners();
                         view.clearForm();
                     } else {
                         view.showErrorMessage("❌ Thêm tài khoản thất bại.");
@@ -87,12 +96,9 @@ public class AccountMPresenter {
                     view.showErrorMessage("Lỗi khi thêm tài khoản qua API: " + e.getMessage());
                 }
             }
-
-            private void notifyListeners() {
-                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-            }
         }.execute();
     }
+
 
     // Cập nhật tài khoản
     public void updateAccount(Account updateAccount) {

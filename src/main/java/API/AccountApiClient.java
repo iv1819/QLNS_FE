@@ -4,8 +4,16 @@
  */
 package API;
 import Model.Account; // Import Model.Account (frontend)
+import Model.AccountDto;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,14 +54,14 @@ public class AccountApiClient extends ApiClientBase {
         requestBody.put("taiKhoan", taiKhoan);
         requestBody.put("matKhau", matKhau);
         String jsonRequest = objectMapper.writeValueAsString(requestBody);
-
+        
         // Endpoint cho login là /accounts/login
         String jsonResponse = sendPostRequest(ACCOUNTS_API_PATH + "/login", jsonRequest);
-
+        
         // Phản hồi của login là Map<String, Object> (success, message, role, tennv)
         return objectMapper.readValue(jsonResponse, new TypeReference<Map<String, Object>>() {});
     }
-
+    
     /**
      * Lấy tất cả tài khoản từ API.
      * @return Danh sách các đối tượng Account.
@@ -97,10 +105,33 @@ public class AccountApiClient extends ApiClientBase {
         sendDeleteRequest(ACCOUNTS_API_PATH + "/" + taiKhoan);
     }
 
-    public Account addAccount(Account account) throws IOException {
-        String jsonRequest = objectMapper.writeValueAsString(account);
-        String jsonResponse = sendPostRequest(ACCOUNTS_API_PATH, jsonRequest);
-        return objectMapper.readValue(jsonResponse, Account.class);
+    public AccountDto addAccount(AccountDto dto) {
+        try {
+            URL url = new URL("http://localhost:8080/api/accounts/register");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+
+            ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writeValueAsString(dto);
+
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = json.getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
+            if (conn.getResponseCode() == 201) {
+                InputStream responseStream = conn.getInputStream();
+                return mapper.readValue(responseStream, AccountDto.class);
+            } else {
+                return null;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 
@@ -109,6 +140,19 @@ public class AccountApiClient extends ApiClientBase {
     }
 
     public boolean tonTaiTaiKhoan(String taiKhoan) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            String urlStr = "http://localhost:8080/api/account/" + URLEncoder.encode(taiKhoan, "UTF-8");
+            URL url = new URL(urlStr);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+
+            int responseCode = con.getResponseCode();
+
+            // Nếu tìm thấy account, API sẽ trả về 200
+            return responseCode == 200;
+        } catch (IOException e) {
+            // Nếu xảy ra lỗi 404 hoặc không kết nối được -> tài khoản không tồn tại
+            return false;
+        }
     }
 }
