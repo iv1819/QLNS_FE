@@ -58,8 +58,8 @@ setLocationRelativeTo(null);
         
         btnPublisher.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Publisher publisher = new Publisher();
-                publisher.setVisible(true);
+                Publisher2 publisher2 = new Publisher2();
+                publisher2.setVisible(true);
                 dispose();
                
             }
