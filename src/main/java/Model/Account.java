@@ -4,10 +4,13 @@
  */
 package Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  *
  * @author Admin
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Account {
        private String taiKhoan;
     private String matKhau;

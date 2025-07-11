@@ -34,7 +34,6 @@ public class AccountM extends javax.swing.JFrame implements IAccountM {
         txtTK.setEditable(false);
         txtMK.setEditable(false);
         accountPresenter = new AccountMPresenter(this);
-        populateComboBoxes();
 
         jTable_Account.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             @Override
@@ -46,43 +45,7 @@ public class AccountM extends javax.swing.JFrame implements IAccountM {
         });
         accountPresenter.loadAllAccounts();
     }
-    
-    private void populateComboBoxes() {
-        
-        List<String> chucVu = accountPresenter.getAllMaCV();
-        DefaultComboBoxModel<String> cvModel = new DefaultComboBoxModel<>();
-        for (String cv : chucVu) {
-            cvModel.addElement(cv);
-        }
-        jcbxMCV.setModel(cvModel);
-        
-        List<String> trangThai = accountPresenter.getAllTrangThai();
-        DefaultComboBoxModel<String> ttModel = new DefaultComboBoxModel<>();
-        for (String ma : trangThai) {
-            ttModel.addElement(ma);
-        }
-////        jcbxTT.setModel(ttModel);
-    }
-    public void displayAccount(ArrayList<Account> account){
-        DefaultTableModel dtm = (DefaultTableModel) jTable_Account.getModel();
-        dtm.setRowCount(0); //Xóa dữ liệu cũ
-        dtm.setColumnCount(0); //xóa cột cũ
-        dtm.addColumn("TaiKhoan");
-        dtm.addColumn("MatKhau");
-        dtm.addColumn("TenCV");
-        dtm.addColumn("TrangThai");
-        dtm.addColumn("TenNV");
-        
-        for(Account acc : account) {
-            Vector<Object> row = new Vector<> ();
-            row.add(acc.getTaiKhoan());
-            row.add(acc.getMatKhau());
-            row.add(acc.getChucVu());
-            row.add(acc.getTrangThai());
-            row.add(acc.getTennv());
-            dtm.addRow(row);
-        }
-    }
+
     
     private void displaySelectedAccountInfo() {
         int selectedRow = jTable_Account.getSelectedRow();
@@ -471,66 +434,87 @@ public class AccountM extends javax.swing.JFrame implements IAccountM {
 
     @Override
     public String getTaiKhoan() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return txtTK.getText();
     }
 
     @Override
     public String getMatKhau() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return txtMK.getText();
     }
 
     @Override
     public String getTennv() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return txtTenNV.getText();
     }
 
     @Override
     public String getChucVu() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return jcbxMCV.getSelectedItem().toString();
     }
 
     @Override
     public String getTrangThai() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return jcbxTT.getSelectedItem().toString();
     }
 
     @Override
     public void setTaiKhoan(String taiKhoan) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        txtTK.setText(taiKhoan);
     }
 
     @Override
     public void setMatKhau(String matKhau) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        txtMK.setText(matKhau);
     }
 
     @Override
     public void setTennv(String tenNV) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        txtTenNV.setText(tenNV);
     }
 
     @Override
     public void setChucVu(String tenCV) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        jcbxMCV.setSelectedItem(tenCV);
     }
 
     @Override
     public void setTrangThai(String trangThai) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        jcbxTT.setSelectedItem(trangThai);
     }
 
     @Override
     public void clearForm() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        txtTK.setText("");
+        txtMK.setText("");
+        txtTenNV.setText("");
+        jcbxMCV.setSelectedIndex(0);
+        jcbxTT.setSelectedIndex(0);
     }
 
     @Override
-    public void displayAccounts(ArrayList<Account> arrayList) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void displayAccounts(ArrayList<Account> accounts) {
+        DefaultTableModel dtm = (DefaultTableModel) jTable_Account.getModel();
+        dtm.setRowCount(0); // Xóa dữ liệu cũ
+
+        for (Account acc : accounts) {
+            Vector<Object> row = new Vector<>();
+            row.add(acc.getTaiKhoan());
+            row.add(acc.getMatKhau());
+            row.add(acc.getChucVu());
+            row.add(acc.getTrangThai());
+            row.add(acc.getTennv());
+            dtm.addRow(row);
+        }
     }
 
     @Override
     public void populateAccountDetails(Account acc) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (acc != null) {
+            setTaiKhoan(acc.getTaiKhoan());
+            setMatKhau(acc.getMatKhau());
+            setChucVu(acc.getChucVu());
+            setTrangThai(acc.getTrangThai());
+            setTennv(acc.getTennv());
+        }
     }
 }

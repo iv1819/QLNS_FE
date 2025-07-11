@@ -134,7 +134,8 @@ public class AccountMPresenter {
             }
 
             private void notifyListeners() {
-                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                view.showMessage("🎉 Dữ liệu đã thay đổi và cập nhật thành công.");
+                loadAllAccounts();// Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
             }
         }.execute();
     }
@@ -163,7 +164,8 @@ public class AccountMPresenter {
             }
 
             private void notifyListeners() {
-                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                view.showMessage("🎉 Dữ liệu đã cập nhật xong!");
+                loadAllAccounts(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
             }
         }.execute();
     }

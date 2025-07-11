@@ -46,14 +46,14 @@ public class AccountApiClient extends ApiClientBase {
         requestBody.put("taiKhoan", taiKhoan);
         requestBody.put("matKhau", matKhau);
         String jsonRequest = objectMapper.writeValueAsString(requestBody);
-        
+
         // Endpoint cho login là /accounts/login
         String jsonResponse = sendPostRequest(ACCOUNTS_API_PATH + "/login", jsonRequest);
-        
+
         // Phản hồi của login là Map<String, Object> (success, message, role, tennv)
         return objectMapper.readValue(jsonResponse, new TypeReference<Map<String, Object>>() {});
     }
-    
+
     /**
      * Lấy tất cả tài khoản từ API.
      * @return Danh sách các đối tượng Account.
@@ -97,11 +97,18 @@ public class AccountApiClient extends ApiClientBase {
         sendDeleteRequest(ACCOUNTS_API_PATH + "/" + taiKhoan);
     }
 
-    public Account addAccount(Account acc) {
+    public Account addAccount(Account account) throws IOException {
+        String jsonRequest = objectMapper.writeValueAsString(account);
+        String jsonResponse = sendPostRequest(ACCOUNTS_API_PATH, jsonRequest);
+        return objectMapper.readValue(jsonResponse, Account.class);
+    }
+
+
+    public List<Account> searchAccounts(String keyword) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    public List<Account> searchAccounts(String keyword) {
+    public boolean tonTaiTaiKhoan(String taiKhoan) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

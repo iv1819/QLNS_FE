@@ -9,10 +9,9 @@ import Model.Author;
 import Presenter.AuthorMPresenter;
 import Presenter.MainMenuPresenter;
 import View.interfaces.IAuthorM;
-import java.io.File;
+
 import java.util.ArrayList;
 import java.util.Vector;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
