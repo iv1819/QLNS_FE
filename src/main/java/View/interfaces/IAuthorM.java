@@ -12,7 +12,11 @@ import java.util.ArrayList;
  * @author trang
  */
 public interface IAuthorM {
-
+    
+    void setMaTG();
+    
+    void setTenTG();
+    
     public void showErrorMessage(String string);
 
     public void displayAuthors(ArrayList<Author> arrayList);

@@ -34,7 +34,6 @@ public class AccountM extends javax.swing.JFrame implements IAccountM {
         txtTK.setEditable(false);
         txtMK.setEditable(false);
         accountPresenter = new AccountMPresenter(this);
-        populateComboBoxes();
 
         jTable_Account.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             @Override
@@ -47,22 +46,6 @@ public class AccountM extends javax.swing.JFrame implements IAccountM {
         accountPresenter.loadAllAccounts();
     }
     
-    private void populateComboBoxes() {
-        
-        List<String> chucVu = accountPresenter.getAllMaCV();
-        DefaultComboBoxModel<String> cvModel = new DefaultComboBoxModel<>();
-        for (String cv : chucVu) {
-            cvModel.addElement(cv);
-        }
-        jcbxMCV.setModel(cvModel);
-        
-        List<String> trangThai = accountPresenter.getAllTrangThai();
-        DefaultComboBoxModel<String> ttModel = new DefaultComboBoxModel<>();
-        for (String ma : trangThai) {
-            ttModel.addElement(ma);
-        }
-////        jcbxTT.setModel(ttModel);
-    }
     public void displayAccount(ArrayList<Account> account){
         DefaultTableModel dtm = (DefaultTableModel) jTable_Account.getModel();
         dtm.setRowCount(0); //Xóa dữ liệu cũ
