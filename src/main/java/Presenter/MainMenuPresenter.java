@@ -70,7 +70,7 @@ private String currentCustomerName = null;
                 for (Category category : categories) {
                     ArrayList<Book> booksInThisCategory = new ArrayList<>();
                     for (Book book : allBooks) {
-                         if (book.getMaDanhMuc() != null && book.getMaDanhMuc().equals(category.getTenDanhMuc())) {
+                         if (book.getMaDanhMuc() != null && book.getMaDanhMuc().equals(category.getMaDanhMuc())) {
                                  booksInThisCategory.add(book);
                         }
                     }

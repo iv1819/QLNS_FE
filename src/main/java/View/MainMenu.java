@@ -378,7 +378,7 @@ private void renderCurrentPage() {
         jtxtPage.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jtxtPage.setForeground(new java.awt.Color(255, 255, 255));
         jtxtPage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jtxtPage.setText("10/10");
+        jtxtPage.setText("0/0");
 
         javax.swing.GroupLayout jBannerLayout = new javax.swing.GroupLayout(jBanner);
         jBanner.setLayout(jBannerLayout);
