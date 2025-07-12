@@ -76,7 +76,6 @@ public class BookM extends javax.swing.JFrame implements IBookM{
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
-                // presenter.closeDatabaseConnection(); // Presenter không còn quản lý kết nối DB trực tiếp
                 if (mainMenuPresenter != null) {
                      presenter.removeListener(mainMenuPresenter); // Hủy đăng ký listener
                      System.out.println("DEBUG (BookM): Đã hủy đăng ký MainMenuPresenter khỏi BookMPresenter.");

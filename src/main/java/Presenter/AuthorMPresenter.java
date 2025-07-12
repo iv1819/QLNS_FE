@@ -80,10 +80,6 @@ public class AuthorMPresenter {
             view.showErrorMessage("Vui lòng nhập tên tác giả.");
             return;
         }
-        if (author.getMaTG() != null && !author.getMaTG().startsWith("tg_")) {
-            view.showErrorMessage("Mã tác giả phải bắt đầu bằng tg_");
-            return;
-        }
         if (!author.getTenTG().matches("^[\\p{L}\\s]+$")) {
             view.showErrorMessage("Tên tác giả không được chứa số hoặc ký tự đặc biệt.");
             return;

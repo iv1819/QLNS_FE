@@ -146,10 +146,9 @@ public void populateMaterialCategoryTabs(LinkedHashMap<String, ArrayList<Book>> 
     cachedCategories.putAll(categorizedBooks);
     currentCategoryIndex = 0;
     currentPage = 0;
-    // 2. Tạo tab cho mỗi danh mục (chỉ chứa JScrollPane rỗng ban đầu)
+    // 2. Tạo tab cho mỗi danh mục 
     jmTabBooks.removeAll();
     jmTabBooks.setPreferredSize(new Dimension(536,461));
-    /* ==== 1. Tab cho sách (như cũ) ==== */
             for (Map.Entry<String, ArrayList<Book>> e : categorizedBooks.entrySet()) {
                 addBookTab(e.getKey(), e.getValue());
             }

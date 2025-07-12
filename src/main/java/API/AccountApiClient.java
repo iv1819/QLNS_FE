@@ -147,7 +147,7 @@ public class AccountApiClient extends ApiClientBase {
 
     public boolean tonTaiTaiKhoan(String taiKhoan) {
         try {
-            String urlStr = "http://localhost:8080/api/account/" + URLEncoder.encode(taiKhoan, "UTF-8");
+            String urlStr = "http://localhost:8080/api/accounts/" + URLEncoder.encode(taiKhoan, "UTF-8");
             URL url = new URL(urlStr);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
