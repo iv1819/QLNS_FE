@@ -124,14 +124,7 @@ public class EmployeeApiClient extends ApiClientBase {
         return Arrays.asList(employeesArray);
     }
 
-    /**
-     * Tìm kiếm nhân viên theo khoảng lương.
-     *
-     * @param minSalary Lương tối thiểu.
-     * @param maxSalary Lương tối đa.
-     * @return Danh sách các đối tượng Employee.
-     * @throws IOException Nếu có lỗi trong quá trình kết nối hoặc phản hồi không thành công.
-     */
+    
     public List<Employee> searchEmployeesBySalaryRange(BigDecimal minSalary, BigDecimal maxSalary) throws IOException {
         String jsonResponse = sendGetRequest(EMPLOYEES_API_PATH + "/search/salary?min=" + minSalary + "&max=" + maxSalary);
         Employee[] employeesArray = objectMapper.readValue(jsonResponse, Employee[].class);
