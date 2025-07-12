@@ -4,10 +4,13 @@
  */
 package Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  *
  * @author Admin
  */
+@JsonIgnoreProperties (ignoreUnknown = true)
 public class Account {
        private String taiKhoan;
     private String matKhau;
@@ -59,10 +62,12 @@ public class Account {
         this.matKhau = matKhau;
         this.chucVu = chucVu;
         this.trangThai = trangThai;
-        this.tennv = tennv;
     }
 
     public Account() {
     }
     private String tennv;
+
+    
 }
+

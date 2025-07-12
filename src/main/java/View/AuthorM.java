@@ -37,7 +37,6 @@ public class AuthorM extends javax.swing.JFrame implements IAuthorM{
         initComponents();
         setLocationRelativeTo(null); 
         authorPresenter = new AuthorMPresenter(this, mainMenuPresenter);
-        authorPresenter.addDataChangeListener(mainMenuPresenter);
         jTable_Authors.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -353,27 +352,28 @@ public class AuthorM extends javax.swing.JFrame implements IAuthorM{
 
     @Override
     public String getMaTG() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return txtMaTG.getText();
     }
 
     @Override
     public String getTenTG() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return txtTenTG.getText();
     }
+
 
     @Override
     public void clearForm() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        clearInputFields();
     }
 
     @Override
-    public void setMaTG() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setMaTG(String maTG) {
+        txtMaTG.setText(maTG);
     }
 
     @Override
-    public void setTenTG() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setTenTG(String tenTG) {
+        txtTenTG.setText(tenTG);
     }
 
 }

@@ -54,7 +54,7 @@
                       <Group type="102" attributes="0">
                           <Component id="btnBookM" min="-2" pref="157" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="jButton2" min="-2" pref="129" max="-2" attributes="0"/>
+                          <Component id="btnAuthor" min="-2" pref="129" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -62,7 +62,7 @@
                               <Component id="btnPublisher" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="jButton12" min="-2" pref="129" max="-2" attributes="0"/>
+                          <Component id="btnAcc" min="-2" pref="129" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -93,13 +93,13 @@
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="btnBookM" min="-2" pref="64" max="-2" attributes="0"/>
                       <Component id="btnCategoryM" max="32767" attributes="0"/>
-                      <Component id="jButton2" alignment="0" max="32767" attributes="0"/>
+                      <Component id="btnAuthor" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="btnEmployeeM" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
                       <Component id="jbtnOrderM" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
-                      <Component id="jButton12" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
+                      <Component id="btnAcc" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -223,7 +223,7 @@
             <Property name="text" type="java.lang.String" value="Qu&#x1ea3;n l&#xed; kh&#xe1;ch h&#xe0;ng"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton2">
+        <Component class="javax.swing.JButton" name="btnAuthor">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="66" green="33" red="0" type="rgb"/>
@@ -237,7 +237,7 @@
             <Property name="text" type="java.lang.String" value="Qu&#x1ea3;n l&#xed; t&#xe1;c gi&#x1ea3;"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton12">
+        <Component class="javax.swing.JButton" name="btnAcc">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="66" green="33" red="0" type="rgb"/>

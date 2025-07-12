@@ -6,6 +6,7 @@ package View;
 
 import API.AccountApiClient;
 import Model.Account;
+import Model.AccountDto;
 import Presenter.RegisterMPresenter;
 import View.interfaces.IRegisterM;
 import java.awt.event.ActionEvent;
@@ -40,49 +41,45 @@ public class RegisterM extends javax.swing.JFrame implements IRegisterM{
         String reMatKhau = new String(txtRMK.getPassword());
         String tenChucVu = (String) jcbxChucVu.getSelectedItem();
         String tenNV = txtTenNV.getText();
-        
-        if (taiKhoan.isEmpty() || matKhau.isEmpty() ||reMatKhau.isEmpty()) {
+
+        // Kiểm tra thông tin đầu vào
+        if (taiKhoan.isEmpty() || matKhau.isEmpty() || reMatKhau.isEmpty() || tenNV.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đủ thông tin!");
             return;
         }
-        
-        if (!matKhau.equals(reMatKhau)){
+
+        if (!matKhau.equals(reMatKhau)) {
             JOptionPane.showMessageDialog(this, "Mật khẩu xác nhận không khớp");
             return;
         }
-        
-        if (tenNV.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập đủ thông tin!");
-            return;
-        }
+
+        // Kiểm tra tài khoản đã tồn tại
         if (accountApiClient.tonTaiTaiKhoan(taiKhoan)) {
             JOptionPane.showMessageDialog(this, "Tài khoản đã tồn tại");
             return;
         }
-        
-        Account acc = new Account();
-        acc.setTaiKhoan(taiKhoan);
-        acc.setMatKhau(matKhau);
-        acc.setChucVu(tenChucVu);
-        acc.setTrangThai("No");
-        acc.setTennv(tenNV);
 
-        
+        // Tạo DTO để gửi API
+        AccountDto dto = new AccountDto();
+        dto.setTaiKhoan(taiKhoan);
+        dto.setMatKhau(matKhau);
+        dto.setConfirmPassword(reMatKhau); // Confirm password cho BE
+        dto.setChucVu(tenChucVu);
+        dto.setTennv(tenNV);
+
         try {
-    Account success = accountApiClient.addAccount(acc);
-    if (success != null) {
-        JOptionPane.showMessageDialog(this, "Đăng ký thành công");
-        Login lg = new Login();
-        lg.setVisible(true);
-        this.dispose();
-    } else {
-        JOptionPane.showMessageDialog(this, "Đăng ký thất bại");
-    }
-} catch (IOException e) {
-    e.printStackTrace();
-    JOptionPane.showMessageDialog(this, "Lỗi kết nối server: " + e.getMessage());
-}
-
+            AccountDto success = accountApiClient.addAccount(dto);
+            if (success != null) {
+                JOptionPane.showMessageDialog(this, "Đăng ký thành công");
+                Login lg = new Login();
+                lg.setVisible(true);
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Đăng ký thất bại");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi gọi API: " + e.getMessage());
+        }
     }
 
     public boolean validateInput() {
@@ -400,8 +397,5 @@ public class RegisterM extends javax.swing.JFrame implements IRegisterM{
     public void setTennv() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
-
- 
     
 }

@@ -21,7 +21,7 @@ public class AuthorMPresenter {
 
     private IAuthorM view;
     private AuthorApiClient authorApiClient;
-
+ 
     public AuthorMPresenter(IAuthorM view) {
         this.view = view;
         this.authorApiClient = new AuthorApiClient();
@@ -29,8 +29,16 @@ public class AuthorMPresenter {
     }
 
     public AuthorMPresenter(AuthorM aThis, MainMenuPresenter mainMenuPresenter) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.view = aThis;
+        this.authorApiClient = new AuthorApiClient();
+
+        // Khởi tạo dữ liệu ngay
+        initializeData();
+
+        // Nếu bạn muốn dùng MainMenuPresenter để làm gì đó sau này thì có thể lưu lại:
+        // this.mainMenuPresenter = mainMenuPresenter; // nếu có biến để giữ
     }
+
 
     private void initializeData() {
         loadAllAuthors();
@@ -93,6 +101,7 @@ public class AuthorMPresenter {
                     Author addedAuthor = get();
                     if (addedAuthor != null) {
                         view.showMessage("Thêm tác giả thành công!");
+                        System.out.println("maTG gửi lên: " + view.getMaTG());
                         loadAllAuthors();
                         view.clearForm();
                     } else {
@@ -101,8 +110,12 @@ public class AuthorMPresenter {
                 } catch (InterruptedException | ExecutionException e) {
                     Throwable cause = e.getCause();
                     String message = cause != null ? cause.getMessage() : e.getMessage();
-                    view.showErrorMessage("Lỗi khi thêm tác giả qua API: " + message);
-                    e.printStackTrace();
+
+                    if (message != null && message.contains("409")) {
+                        view.showErrorMessage("Mã tác giả đã tồn tại. Vui lòng nhập mã khác.");
+                    } else {
+                        view.showErrorMessage("Lỗi khi thêm tác giả: " + message);
+                    }
                 }
             }
         }.execute();
@@ -144,6 +157,8 @@ public class AuthorMPresenter {
                     } else {
                         view.showErrorMessage("Cập nhật tác giả thất bại.");
                     }
+
+
                 } catch (InterruptedException | ExecutionException e) {
                     Throwable cause = e.getCause();
                     String message = cause != null ? cause.getMessage() : e.getMessage();
@@ -222,7 +237,7 @@ public class AuthorMPresenter {
         }.execute();
     }
 
-    public void addDataChangeListener(MainMenuPresenter mainMenuPresenter) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+//    public void addDataChangeListener(MainMenuPresenter mainMenuPresenter) {
+//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+//    }
 }

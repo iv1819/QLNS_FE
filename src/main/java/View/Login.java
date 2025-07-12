@@ -192,10 +192,10 @@ public class Login extends javax.swing.JFrame implements ILogin{
 
     private void jbtnDKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnDKActionPerformed
         // TODO add your handling code here:
-        /*RegisterM lg = new RegisterM();
+        RegisterM lg = new RegisterM();
         lg.setLocationRelativeTo(null);
         lg.setVisible(true);
-        this.dispose();*/
+        this.dispose();
     }//GEN-LAST:event_jbtnDKActionPerformed
 
     /**

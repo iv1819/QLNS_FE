@@ -73,6 +73,24 @@ setLocationRelativeTo(null);
             }
         });
         
+        btnAcc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+              AccountM acc = new AccountM();
+                acc.setVisible(true);
+                dispose();
+                
+            }
+        });
+        
+        btnAuthor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AuthorM author = new AuthorM();
+                author.setVisible(true);
+                dispose();
+                
+            }
+        });
+        
     }
     else{
         btnEmployeeM.setEnabled(false);
@@ -135,8 +153,8 @@ setLocationRelativeTo(null);
         btnCategoryM = new javax.swing.JButton();
         btnEmployeeM = new javax.swing.JButton();
         btnCustomerM = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton12 = new javax.swing.JButton();
+        btnAuthor = new javax.swing.JButton();
+        btnAcc = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -188,15 +206,15 @@ setLocationRelativeTo(null);
         btnCustomerM.setForeground(new java.awt.Color(255, 255, 255));
         btnCustomerM.setText("Quản lí khách hàng");
 
-        jButton2.setBackground(new java.awt.Color(0, 51, 102));
-        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("Quản lí tác giả");
+        btnAuthor.setBackground(new java.awt.Color(0, 51, 102));
+        btnAuthor.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnAuthor.setForeground(new java.awt.Color(255, 255, 255));
+        btnAuthor.setText("Quản lí tác giả");
 
-        jButton12.setBackground(new java.awt.Color(0, 51, 102));
-        jButton12.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton12.setForeground(new java.awt.Color(255, 255, 255));
-        jButton12.setText("Quản lí tài khoản");
+        btnAcc.setBackground(new java.awt.Color(0, 51, 102));
+        btnAcc.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnAcc.setForeground(new java.awt.Color(255, 255, 255));
+        btnAcc.setText("Quản lí tài khoản");
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -216,13 +234,13 @@ setLocationRelativeTo(null);
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(btnBookM, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnAuthor, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jbtnOrderM, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
                             .addComponent(btnPublisher, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
-                        .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnAcc, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnCategoryM, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -245,12 +263,12 @@ setLocationRelativeTo(null);
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnBookM, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnCategoryM, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnAuthor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnEmployeeM, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jbtnOrderM, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnAcc, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCustomerM, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -321,14 +339,14 @@ setLocationRelativeTo(null);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAcc;
+    private javax.swing.JButton btnAuthor;
     private javax.swing.JButton btnBack;
     private javax.swing.JButton btnBookM;
     private javax.swing.JButton btnCategoryM;
     private javax.swing.JButton btnCustomerM;
     private javax.swing.JButton btnEmployeeM;
     private javax.swing.JButton btnPublisher;
-    private javax.swing.JButton jButton12;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton jbtnOrderM;
