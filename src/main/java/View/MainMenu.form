@@ -147,6 +147,9 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="jbtnPreviousPage">
                   <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="ff" green="ff" red="fe" type="rgb"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="&lt;"/>
                   </Properties>
                   <Events>
@@ -155,6 +158,9 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="jbtnNextPage">
                   <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="ff" green="ff" red="fe" type="rgb"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="&gt;"/>
                   </Properties>
                   <Events>
@@ -399,6 +405,9 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="jbtnDX">
                   <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="ff" green="ff" red="fe" type="rgb"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="&#x110;&#x103;ng xu&#x1ea5;t"/>
                   </Properties>
                 </Component>

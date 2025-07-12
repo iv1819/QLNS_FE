@@ -361,6 +361,7 @@ private void renderCurrentPage() {
             }
         });
 
+        jbtnPreviousPage.setBackground(new java.awt.Color(254, 255, 255));
         jbtnPreviousPage.setText("<");
         jbtnPreviousPage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -368,6 +369,7 @@ private void renderCurrentPage() {
             }
         });
 
+        jbtnNextPage.setBackground(new java.awt.Color(254, 255, 255));
         jbtnNextPage.setText(">");
         jbtnNextPage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -531,6 +533,7 @@ private void renderCurrentPage() {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Hóa đơn");
 
+        jbtnDX.setBackground(new java.awt.Color(254, 255, 255));
         jbtnDX.setText("Đăng xuất");
 
         javax.swing.GroupLayout jBanner2Layout = new javax.swing.GroupLayout(jBanner2);
